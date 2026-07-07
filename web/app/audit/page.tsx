@@ -1,7 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Download } from "lucide-react";
 import { fetchAuditTrail, AuditEntry } from "@/lib/api";
+
+function exportCsv(logs: AuditEntry[]) {
+  const header = "Time,Event,Case ID,Detail\n";
+  const rows = logs
+    .map(
+      (l) =>
+        `"${l.created_at}","${l.event_type.replace(/"/g, '""')}","${l.patient_id ?? ""}","${l.detail.replace(/"/g, '""')}"`
+    )
+    .join("\n");
+  const blob = new Blob([header + rows], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `VisionFlow-Audit-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function AuditPage() {
   const [logs, setLogs] = useState<AuditEntry[]>([]);
@@ -15,12 +33,24 @@ export default function AuditPage() {
 
   return (
     <div className="animate-fade-up space-y-6">
-      <p className="text-sm text-[#6b8cb8]">
-        Immutable-style activity log for clinical governance — intakes, attestations, and assistant queries.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-[#6b8cb8]">
+          Immutable activity log for clinical governance — intakes, attestations, and assistant queries.
+        </p>
+        {logs.length > 0 && (
+          <button
+            type="button"
+            onClick={() => exportCsv(logs)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs text-accent-glow hover:bg-accent/20"
+          >
+            <Download size={14} />
+            Export CSV
+          </button>
+        )}
+      </div>
       {error && <div className="glass p-4 text-red-300">{error}</div>}
-      <div className="glass overflow-hidden">
-        <table className="w-full text-left text-sm">
+      <div className="glass overflow-x-auto">
+        <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="border-b border-border bg-canvas/50 text-xs uppercase text-[#6b8cb8]">
             <tr>
               <th className="px-4 py-3">Time (UTC)</th>

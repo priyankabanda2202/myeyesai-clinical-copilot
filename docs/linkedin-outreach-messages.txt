@@ -1,0 +1,242 @@
+VISIONFLOW LINKEDIN OUTREACH — Priyanka Banda | GenAI Developer
+Demo: https://visionflow-clinical-copilot.onrender.com/
+Warm link 2 min before sending. Max 5-8 connection requests/day.
+LinkedIn limit: connection note = 300 characters max.
+
+================================================================================
+1. DR. ANTHONY VIPIN DAS
+   Profile: https://www.linkedin.com/in/antonvipin
+   Why him: Built eyeSmart EMR (15M+ consults), digital health innovator, TED Fellow
+================================================================================
+
+CONNECTION NOTE (copy exactly — 298 chars):
+Hi Dr. Das — I'm a GenAI developer. I built a LangGraph ophthalmology platform with live triage, AI intake, physician attestation & scheduling — inspired by hospital-grade EMR workflows like eyeSmart. Would deeply value your innovation perspective. Connect?
+
+FOLLOW-UP (after he accepts):
+Hi Dr. Das,
+
+Thank you for connecting.
+
+I'm a GenAI developer. I built VisionFlow Clinical Copilot — a real-time ophthalmology platform with:
+• Live triage board (RED / YELLOW / GREEN lanes)
+• LangGraph multi-agent intake → clinical assessment → attending report
+• Physician review desk with accept / modify / reject attestation
+• Scheduling desk + downloadable hospital-letterhead reports
+
+Given your work scaling eyeSmart across 15M+ consults, you're exactly the person I'd want feedback from.
+
+Try on your phone:
+https://visionflow-clinical-copilot.onrender.com/
+
+Note: first load takes ~45 seconds (loading screen appears), then everything is live.
+
+Suggested 2-min walkthrough:
+Command Center → Patient Intake (pick a template) → Physician Review → Reports → Download
+
+Not selling anything — genuinely asking: does this feel like a real hospital workflow?
+
+Would 10–15 minutes for your perspective work?
+
+Best,
+Priyanka Banda
+GenAI Developer
+
+================================================================================
+2. SRINIVASULU THAYAM — CTO, Aravind Eye Care System
+   Profile: https://www.linkedin.com/in/srinivasulu-thayam-86963610
+   Why him: CTO of Aravind, IHMS used by 150+ hospitals, telemedicine at scale
+================================================================================
+
+CONNECTION NOTE (copy exactly — 296 chars):
+Hi Srinivasulu — GenAI developer here. I built a multi-agent ophthalmology platform (live triage, automated intake, physician review, scheduling) for high-volume eye care ops. Given Aravind's IHMS scale, would appreciate your technical feedback. Connect?
+
+FOLLOW-UP:
+Hi Srinivasulu,
+
+Thank you for connecting.
+
+I'm a GenAI developer. I built VisionFlow Clinical Copilot for high-volume ophthalmology — the kind of workflow Aravind pioneered at scale:
+
+• Live triage lanes (emergency / urgent / routine)
+• Automated intake pipeline with LangGraph agents
+• Physician attestation queue before chart finalization
+• Scheduling desk with urgency-based slot routing
+• Audit trail with CSV export
+
+Mobile-friendly demo:
+https://visionflow-clinical-copilot.onrender.com/
+
+First load ~45 sec — loading screen handles server wake-up.
+
+I'd love your take: does the triage → intake → review → schedule flow map to how a real eye hospital runs?
+
+Happy to walk through in 10–15 min if you're open to it.
+
+Best,
+Priyanka Banda
+GenAI Developer
+
+================================================================================
+3. RATHINAM THYAGARAJAN — Network Head IT&S, LVPEI
+   Profile: https://www.linkedin.com/in/rathinamthyagarajan
+   Why him: Leads IT & Systems across 300+ LVPEI locations, innovation incubator advisor
+================================================================================
+
+CONNECTION NOTE (copy exactly — 294 chars):
+Hi Rathinam — GenAI developer. I built an ophthalmology clinical platform for multi-site eye care: live triage, AI intake automation, physician review queue & scheduling desk. Given LVPEI's 300+ location IT network, would value your perspective. Connect?
+
+FOLLOW-UP:
+Hi Rathinam,
+
+Thank you for connecting.
+
+I'm a GenAI developer. I built VisionFlow Clinical Copilot — designed for multi-campus ophthalmology networks like LVPEI:
+
+• Branch switcher across campus locations
+• Live triage board with auto-refresh
+• AI pipeline: intake → reasoning → urgency → attending report
+• Physician review desk + scheduling recommendations
+• Operations dashboard (time saved, caseload, revenue signals)
+
+Try on mobile:
+https://visionflow-clinical-copilot.onrender.com/
+
+First load ~45 sec, then real-time.
+
+With your experience leading IT&S and advising the innovation incubator at LVPEI — does this workflow feel deployable across a large eye care network?
+
+Would 10–15 min of feedback be possible?
+
+Best,
+Priyanka Banda
+GenAI Developer
+
+================================================================================
+4. NANDHAKUMAR T V — SVP Operations, Dr Agarwal's Eye Hospital
+   Profile: https://www.linkedin.com/in/nandhakumar-t-v-7a2b3435
+   Why him: 80+ hospitals TN, P&L owner, IT-driven ops efficiency, clinical board admin
+================================================================================
+
+CONNECTION NOTE (copy exactly — 297 chars):
+Hi Nandha — GenAI developer. I built an AI ophthalmology ops platform: live triage, automated intake (~38 min saved/case), physician review queue & scheduling desk. With your 80+ hospital ops scope at Dr Agarwal's, would value your honest feedback. Connect?
+
+FOLLOW-UP:
+Hi Nandha,
+
+Thank you for connecting.
+
+I'm a GenAI developer. I built VisionFlow Clinical Copilot focused on what ops leaders care about:
+
+• Live triage queue — emergency cases surfaced instantly
+• Automated intake → chart draft → ICD-10 suggestion → referral routing
+• Physician attestation before records finalize
+• Scheduling desk with same-day / priority / routine lanes
+• Operations hub showing time saved & throughput metrics
+
+Try on your phone:
+https://visionflow-clinical-copilot.onrender.com/
+
+First load ~45 sec, then live.
+
+Given your experience scaling 80+ clinics with IT-driven decision-making — does this actually reduce ops friction, or is something missing?
+
+Not a pitch — just looking for an honest ops perspective. 10–15 min?
+
+Best,
+Priyanka Banda
+GenAI Developer
+
+================================================================================
+5. DR. PRIYANKA PATRA — Glaucoma Specialist, Lions Care Centre
+   Profile: https://www.linkedin.com/in/priyanka-patra-301a38123
+   Why her: Runs glaucoma clinic, hands-on clinician, understands daily clinic workflow
+================================================================================
+
+CONNECTION NOTE (copy exactly — 291 chars):
+Hi Dr. Patra — GenAI developer. I built an ophthalmology clinical tool with live triage, AI-assisted assessment, attending reports & patient education for eye clinics. Congrats on your Glaucoma Clinic launch — would value a clinician's perspective. Connect?
+
+FOLLOW-UP:
+Hi Dr. Patra,
+
+Thank you for connecting — and congratulations on launching your Glaucoma Clinic at Lions Care Centre.
+
+I'm a GenAI developer. I built VisionFlow Clinical Copilot for day-to-day clinic workflows:
+
+• Emergency / urgent / routine triage lanes
+• Structured intake (VA, IOP, laterality, duration)
+• AI clinical assessment + attending report draft
+• Patient education handout generation
+• Physician accept / modify / reject before filing
+
+Try on your phone:
+https://visionflow-clinical-copilot.onrender.com/
+
+Quick clinician walkthrough:
+Patient Intake → pick "Urgent — Acute angle closure" → Run Automated Pipeline → review Assessment tab
+
+As someone running a glaucoma clinic — does the clinical output feel useful, or would you reject it in real practice?
+
+Would love 10 min of your honest clinical feedback.
+
+Best,
+Priyanka Banda
+GenAI Developer
+
+================================================================================
+6. CORINNE K — Executive Director, Pacific Eye Associates (SF Bay Area)
+   Profile: https://www.linkedin.com/in/ccknowles
+   Why her: Leads 12 clinicians + ~40 staff, RCM, workflow optimization, cut TAT 50%+ at prior role
+================================================================================
+
+CONNECTION NOTE (copy exactly — 299 chars):
+Hi Corinne — GenAI developer. I built an ophthalmology ops platform: live triage, AI intake automation, physician review queue & scheduling — for multi-site surgical practices. Given your workflow/RCM focus at Pacific Eye, would value your ops perspective. Connect?
+
+FOLLOW-UP:
+Hi Corinne,
+
+Thank you for connecting.
+
+I'm a GenAI developer. I built VisionFlow Clinical Copilot for multi-site ophthalmology practices like yours:
+
+• Live triage board — staff see emergency cases first
+• AI automates intake documentation (~38 min saved per case)
+• Physician review queue before charts finalize
+• Scheduling desk with urgency-based slots
+• Report download with practice letterhead
+
+Your background cutting patient turnaround time and scaling clinical ops is exactly why I'm reaching out.
+
+Try on mobile:
+https://visionflow-clinical-copilot.onrender.com/
+
+First load ~45 sec, then real-time.
+
+Walkthrough: Command Center → Scheduling Desk → Physician Review → Reports
+
+Would this actually help your team, or is there a gap I'm missing? 10–15 min of honest feedback?
+
+Best,
+Priyanka Banda
+GenAI Developer
+
+================================================================================
+BONUS: LINKEDIN POST (publish before or same day as outreach)
+================================================================================
+
+Built VisionFlow Clinical Copilot — a real-time ophthalmology clinical platform.
+
+LangGraph multi-agent pipeline powering:
+🔴 Live Triage Board
+🩺 AI Patient Intake
+📋 Physician Review Desk
+📅 Scheduling Desk
+📄 Report Download
+
+Try on your phone:
+https://visionflow-clinical-copilot.onrender.com/
+
+First load ~45 sec (loading screen), then live.
+
+Looking for feedback from eye hospital ops leaders & clinicians — does this match real workflows?
+
+#GenAI #LangGraph #HealthcareAI #Ophthalmology #ClinicalDecisionSupport

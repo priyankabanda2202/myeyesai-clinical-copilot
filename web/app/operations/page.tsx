@@ -47,7 +47,7 @@ export default function OperationsPage() {
 
       <LiveStatusBar connected={connected} lastSync={lastSync} onRefresh={refresh} />
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         <PremiumMetricCard
           label="Hours Saved Today"
           value={Math.round(ops?.hours_saved_total ?? 0)}
@@ -74,7 +74,7 @@ export default function OperationsPage() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="glass p-6">
           <h3 className="font-semibold text-white">What We Automate for Your Practice</h3>
           <ul className="mt-4 space-y-3 text-sm text-slate-300">

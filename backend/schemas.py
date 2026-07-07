@@ -136,3 +136,12 @@ class PracticeOperations(BaseModel):
     avg_time_per_case_minutes: int
     throughput_gain_percent: int
     monthly_projection_usd: int
+
+
+class SchedulingEntry(BaseModel):
+    id: int
+    name: str
+    urgency: str | None
+    scheduling_recommendation: str
+    referral_action: str = ""
+    review_status: str = "pending"

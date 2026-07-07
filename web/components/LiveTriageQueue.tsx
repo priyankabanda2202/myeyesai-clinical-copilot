@@ -17,7 +17,7 @@ export default function LiveTriageQueue({ patients }: { patients: Patient[] }) {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
       {lanes.map(({ key, label, icon: Icon, items, color }) => (
         <div key={key} className={`glass rounded-2xl p-4 ${color}`}>
           <div className="mb-3 flex items-center justify-between">
@@ -34,17 +34,19 @@ export default function LiveTriageQueue({ patients }: { patients: Patient[] }) {
               <p className="py-4 text-center text-xs text-slate-500">No cases in queue</p>
             ) : (
               items.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/reports/?id=${p.id}`}
-                  className={`live-queue-item block ${p.urgency === "RED" ? "animate-pulse-soft border-critical/30" : ""}`}
-                >
-                  <div className="min-w-0 flex-1">
+                <div key={p.id} className={`live-queue-item ${p.urgency === "RED" ? "animate-pulse-soft border-critical/30" : ""}`}>
+                  <Link href={`/reports/?id=${p.id}`} className="block min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-white">{p.name}</p>
                     <p className="truncate text-[11px] text-slate-400">{p.symptoms?.slice(0, 60)}</p>
+                  </Link>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <UrgencyBadge urgency={p.urgency} compact />
+                    <div className="flex gap-1">
+                      <Link href={`/reports/?id=${p.id}`} className="text-[10px] text-gold hover:underline">Review</Link>
+                      <Link href={`/assistant/?id=${p.id}`} className="text-[10px] text-accent-glow hover:underline">Ask</Link>
+                    </div>
                   </div>
-                  <UrgencyBadge urgency={p.urgency} compact />
-                </Link>
+                </div>
               ))
             )}
           </div>

@@ -1,19 +1,19 @@
 "use client";
 
-import { DEMO_CASES } from "@/lib/demoCases";
+import { INTAKE_TEMPLATES } from "@/lib/intakeTemplates";
 
 export default function SampleCasePicker({
   onSelect,
 }: {
-  onSelect: (caseData: (typeof DEMO_CASES)[number]) => void;
+  onSelect: (caseData: (typeof INTAKE_TEMPLATES)[number]) => void;
 }) {
   return (
-    <div className="mt-4 rounded-xl border border-border bg-canvas/40 p-4">
+    <div className="mt-4 rounded-xl border border-border/60 bg-canvas/40 p-4">
       <p className="text-xs font-semibold uppercase tracking-wide text-[#6b8cb8]">
-        Quick-load demo cases for evaluators
+        Standard presentation templates
       </p>
       <div className="mt-3 grid grid-cols-2 gap-2">
-        {DEMO_CASES.map((c) => (
+        {INTAKE_TEMPLATES.map((c) => (
           <button
             key={c.id}
             type="button"

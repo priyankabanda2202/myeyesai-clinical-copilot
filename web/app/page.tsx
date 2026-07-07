@@ -8,6 +8,7 @@ import LiveStatusBar from "@/components/LiveStatusBar";
 import LiveTriageQueue from "@/components/LiveTriageQueue";
 import PremiumMetricCard from "@/components/PremiumMetricCard";
 import UrgencyBadge from "@/components/UrgencyBadge";
+import ReviewQueuePanel from "@/components/ReviewQueuePanel";
 import ValuePropositionBanner from "@/components/ValuePropositionBanner";
 import { useLiveData } from "@/hooks/useLiveData";
 import { useEffect, useState } from "react";
@@ -32,14 +33,14 @@ export default function DashboardPage() {
       <LiveStatusBar connected={connected} lastSync={lastSync} onRefresh={refresh} />
       <ValuePropositionBanner />
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         <PremiumMetricCard label="Hours Saved" value={Math.round(ops?.hours_saved_total ?? 0)} icon={Clock} accent="#10b981" loading={loading} />
         <PremiumMetricCard label="Revenue Pipeline ($K)" value={Math.round((ops?.revenue_pipeline_usd ?? 0) / 1000)} icon={DollarSign} accent="#d4a853" loading={loading} />
         <PremiumMetricCard label="Automation" value={ops?.automation_rate_percent ?? 0} icon={TrendingUp} accent="#3b82f6" loading={loading} />
         <PremiumMetricCard label="Active Caseload" value={brief?.total ?? 0} icon={Users} accent="#8b5cf6" loading={loading} />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4">
         <Link href="/operations/" className="glass-hover group p-5">
           <p className="font-semibold text-gold group-hover:text-yellow-300">Practice ROI Hub →</p>
           <p className="mt-1 text-xs text-slate-400">Time saved, revenue capture, automation breakdown</p>
@@ -50,19 +51,22 @@ export default function DashboardPage() {
         </Link>
         <Link href="/intake/" className="glass-hover group p-5">
           <p className="font-semibold text-white group-hover:text-accent-glow">Automate New Case →</p>
-          <p className="mt-1 text-xs text-slate-400">38 min saved per intake — demo ready</p>
+          <p className="mt-1 text-xs text-slate-400">~38 min saved per intake · billing-ready documentation</p>
         </Link>
       </div>
 
-      <div>
-        <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-white">
-          <span className="h-2 w-2 rounded-full bg-live live-pulse" />
-          Live Triage Queue
-        </h2>
-        <LiveTriageQueue patients={patients} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-white">
+            <span className="h-2 w-2 rounded-full bg-live live-pulse" />
+            Live Triage Queue
+          </h2>
+          <LiveTriageQueue patients={patients} />
+        </div>
+        <ReviewQueuePanel patients={patients} />
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="glass p-6">
           <h3 className="mb-4 font-semibold text-white">Caseload Distribution</h3>
           <div className="h-64">

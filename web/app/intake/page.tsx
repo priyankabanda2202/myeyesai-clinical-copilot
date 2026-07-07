@@ -11,8 +11,10 @@ import Icd10Badge from "@/components/Icd10Badge";
 import Panel from "@/components/Panel";
 import ReferralPanel from "@/components/ReferralPanel";
 import SampleCasePicker from "@/components/SampleCasePicker";
+import DownloadReport from "@/components/DownloadReport";
 import UrgencyBadge from "@/components/UrgencyBadge";
 import { submitIntake } from "@/lib/api";
+import { INTAKE_TEMPLATES } from "@/lib/intakeTemplates";
 
 const PIPELINE_STEPS = [
   "Intake normalization",
@@ -72,7 +74,7 @@ export default function IntakePage() {
     }
   }
 
-  function loadDemo(c: (typeof import("@/lib/demoCases").DEMO_CASES)[number]) {
+  function loadTemplate(c: (typeof INTAKE_TEMPLATES)[number]) {
     setName(c.name);
     setAge(c.age);
     setSymptoms(c.symptoms);
@@ -84,13 +86,13 @@ export default function IntakePage() {
   }
 
   return (
-    <div className="animate-fade-up grid grid-cols-2 gap-8">
+    <div className="animate-fade-up grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
       <div className="glass p-6">
         <h2 className="text-lg font-semibold text-white">Structured Patient Intake</h2>
         <p className="mt-1 text-sm text-[#6b8cb8]">
           Ophthalmology-specific fields required for clinical decision support.
         </p>
-        <SampleCasePicker onSelect={loadDemo} />
+        <SampleCasePicker onSelect={loadTemplate} />
         <form onSubmit={handleSubmit} className="mt-6 space-y-3">
           <input
             className="field-input"
@@ -172,7 +174,7 @@ export default function IntakePage() {
 
         {!loading && error && <p className="mt-6 text-sm text-red-400">{error}</p>}
         {!loading && !error && !result && (
-          <p className="mt-8 text-[#6b8cb8]">Load a demo case or enter structured presentation data.</p>
+          <p className="mt-8 text-[#6b8cb8]">Select a presentation template or enter structured intake data.</p>
         )}
 
         {!loading && result && (
@@ -228,6 +230,19 @@ export default function IntakePage() {
             {tab === "trace" && <AgentTrace steps={result.pipeline_trace} />}
 
             <AttestationBar patientId={result.patient?.id} />
+
+            <DownloadReport
+              data={{
+                patientName: name,
+                age,
+                urgency: result.urgency,
+                symptoms,
+                diagnosis: result.analysis,
+                doctorReport: result.doctor_report,
+                icd10: result.icd10_codes,
+                laterality,
+              }}
+            />
 
             {result.patient?.id && (
               <div className="flex gap-3">

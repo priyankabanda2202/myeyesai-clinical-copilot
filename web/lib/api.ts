@@ -144,6 +144,25 @@ export type PracticeOperations = {
   monthly_projection_usd: number;
 };
 
+export type SchedulingEntry = {
+  id: number;
+  name: string;
+  urgency: string | null;
+  scheduling_recommendation: string;
+  referral_action?: string;
+  review_status?: string;
+};
+
+export async function fetchReviewQueue(): Promise<Patient[]> {
+  const res = await apiFetch("/api/review-queue");
+  return res.json();
+}
+
+export async function fetchSchedulingDesk(): Promise<SchedulingEntry[]> {
+  const res = await apiFetch("/api/scheduling");
+  return res.json();
+}
+
 export async function fetchOperations(): Promise<PracticeOperations> {
   const res = await apiFetch("/api/operations");
   return res.json();

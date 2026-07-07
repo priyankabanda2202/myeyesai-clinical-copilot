@@ -36,7 +36,7 @@ export default function BriefPage() {
         Operational brief for clinical leadership — prioritized caseload and staffing actions.
       </p>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         {[
           ["Total Caseload", brief.total],
           ["Critical Today", brief.red],

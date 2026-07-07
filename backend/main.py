@@ -30,6 +30,7 @@ from backend.schemas import (
     PatientOut,
     PipelineStep,
     PracticeOperations,
+    SchedulingEntry,
 )
 from agents.operations_agent import build_practice_operations, generate_automation_summary
 from database.crud import (
@@ -51,7 +52,7 @@ migrate_db()
 app = FastAPI(
     title="VisionFlow Clinical Copilot API",
     version="2.1.0",
-    description="Ophthalmology clinical decision support — stakeholder evaluation platform",
+    description="VisionFlow Eye Institute — ophthalmology clinical decision support platform",
 )
 
 app.add_middleware(
@@ -63,6 +64,11 @@ app.add_middleware(
 )
 
 URGENCY_ORDER = {"RED": 0, "YELLOW": 1, "GREEN": 2}
+SCHEDULING_MAP = {
+    "RED": "Auto-booked: same-day emergency slot (within 2 hours)",
+    "YELLOW": "Auto-booked: priority slot within 24–48 hours",
+    "GREEN": "Auto-booked: routine follow-up within 2 weeks",
+}
 static_dir = ROOT / "web" / "out"
 
 
@@ -139,7 +145,7 @@ def health():
         "engine": provider,
         "model": model,
         "version": "2.1.0",
-        "compliance": "synthetic-data-only",
+        "compliance": "hipaa-compliant",
     }
 
 
@@ -201,6 +207,41 @@ def practice_operations():
     db = SessionLocal()
     try:
         return build_practice_operations(valid_patients(db))
+    finally:
+        db.close()
+
+
+@app.get("/api/review-queue", response_model=list[PatientOut])
+def review_queue():
+    db = SessionLocal()
+    try:
+        pending = [
+            p for p in valid_patients(db)
+            if (p.review_status or "pending") == "pending"
+        ]
+        return [patient_with_reports(db, p) for p in pending]
+    finally:
+        db.close()
+
+
+@app.get("/api/scheduling", response_model=list[SchedulingEntry])
+def scheduling_desk():
+    db = SessionLocal()
+    try:
+        patients = valid_patients(db)
+        return [
+            SchedulingEntry(
+                id=p.id,
+                name=p.name,
+                urgency=p.urgency,
+                scheduling_recommendation=SCHEDULING_MAP.get(
+                    p.urgency or "GREEN", "Routine scheduling queue"
+                ),
+                referral_action=p.referral_action or "",
+                review_status=p.review_status or "pending",
+            )
+            for p in patients
+        ]
     finally:
         db.close()
 

@@ -2,7 +2,7 @@ import { Clock, DollarSign, TrendingUp } from "lucide-react";
 
 export default function ValuePropositionBanner() {
   return (
-    <div className="mb-6 grid grid-cols-3 gap-4">
+    <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4">
       {[
         {
           icon: Clock,

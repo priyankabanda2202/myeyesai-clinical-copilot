@@ -7,7 +7,7 @@ import ClinicalText from "@/components/ClinicalText";
 import ConfidenceBadge from "@/components/ConfidenceBadge";
 import Icd10Badge from "@/components/Icd10Badge";
 import Panel from "@/components/Panel";
-import PrintReport from "@/components/PrintReport";
+import DownloadReport from "@/components/DownloadReport";
 import ReferralPanel from "@/components/ReferralPanel";
 import UrgencyBadge from "@/components/UrgencyBadge";
 import { fetchPatients, Patient } from "@/lib/api";
@@ -47,7 +47,21 @@ export default function ReportsContent() {
         <p className="text-sm text-[#6b8cb8]">
           Attending reports with ICD-10, confidence, referral pathway, and export.
         </p>
-        <PrintReport targetId="report-export" />
+        {selected && (
+          <DownloadReport
+            data={{
+              patientName: selected.name,
+              age: selected.age,
+              urgency: selected.urgency,
+              symptoms: selected.symptoms,
+              diagnosis: selected.diagnosis,
+              doctorReport: selected.doctor_report,
+              icd10: selected.icd10_codes,
+              laterality: selected.laterality,
+            }}
+            targetId="report-export"
+          />
+        )}
       </div>
 
       <select
@@ -94,7 +108,7 @@ export default function ReportsContent() {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div>
               {tab === "attending" && (
                 <Panel title="Attending Report">

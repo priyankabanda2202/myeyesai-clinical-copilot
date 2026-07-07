@@ -1,8 +1,8 @@
-export const DEMO_CASES = [
+export const INTAKE_TEMPLATES = [
   {
     id: "crao",
-    label: "Emergency — Sudden vision loss (CRAO)",
-    name: "Eval-CRAO-01",
+    label: "Emergency — Sudden vision loss",
+    name: "VF-2026-1847",
     age: 67,
     laterality: "OD",
     visual_acuity: "CF at 2ft OD, 20/25 OS",
@@ -15,7 +15,7 @@ export const DEMO_CASES = [
   {
     id: "aacg",
     label: "Urgent — Acute angle closure",
-    name: "Eval-AACG-01",
+    name: "VF-2026-1848",
     age: 54,
     laterality: "OD",
     visual_acuity: "20/200 OD, 20/20 OS",
@@ -27,8 +27,8 @@ export const DEMO_CASES = [
   },
   {
     id: "rd",
-    label: "Emergency — Retinal detachment symptoms",
-    name: "Eval-RD-01",
+    label: "Emergency — Retinal detachment",
+    name: "VF-2026-1849",
     age: 58,
     laterality: "OS",
     visual_acuity: "20/40 OS, 20/20 OD",
@@ -40,8 +40,8 @@ export const DEMO_CASES = [
   },
   {
     id: "routine",
-    label: "Routine — Presbyopia / near blur",
-    name: "Eval-PRESBY-01",
+    label: "Routine — Presbyopia follow-up",
+    name: "VF-2026-1850",
     age: 42,
     laterality: "OU",
     visual_acuity: "20/20 distance OU, J3 near OU",

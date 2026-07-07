@@ -34,7 +34,7 @@ export default function LiveBoardPage() {
 
       <LiveStatusBar connected={connected} lastSync={lastSync} onRefresh={refresh} />
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         <PremiumMetricCard label="Waiting" value={brief?.total ?? 0} icon={Users} accent="#3b82f6" loading={loading} />
         <PremiumMetricCard label="Emergency" value={brief?.red ?? 0} icon={AlertTriangle} accent="#ef4444" loading={loading} pulse />
         <PremiumMetricCard label="Urgent" value={brief?.yellow ?? 0} icon={Clock} accent="#f59e0b" loading={loading} />
@@ -43,7 +43,7 @@ export default function LiveBoardPage() {
 
       <LiveTriageQueue patients={patients} />
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="brief-card">
           <h3 className="font-semibold text-white">Live Operations Brief</h3>
           <div className="mt-3">

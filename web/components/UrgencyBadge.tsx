@@ -1,25 +1,26 @@
 import clsx from "clsx";
 
+const config: Record<string, { label: string; className: string }> = {
+  RED: { label: "HIGH URGENCY", className: "urgency-red" },
+  YELLOW: { label: "URGENT", className: "urgency-yellow" },
+  GREEN: { label: "ROUTINE", className: "urgency-green" },
+};
+
 export default function UrgencyBadge({ urgency }: { urgency: string | null }) {
-  if (!urgency) return null;
-  const styles: Record<string, string> = {
-    RED: "border-red-500/50 bg-red-500/10 text-red-300",
-    YELLOW: "border-amber-500/50 bg-amber-500/10 text-amber-300",
-    GREEN: "border-emerald-500/50 bg-emerald-500/10 text-emerald-300",
+  if (!urgency) {
+    return (
+      <div className="panel py-3">
+        <span className="text-[#6b8cb8]">Triage pending</span>
+      </div>
+    );
+  }
+
+  const { label, className } = config[urgency] || {
+    label: urgency,
+    className: "urgency-green",
   };
-  const labels: Record<string, string> = {
-    RED: "Critical",
-    YELLOW: "Urgent",
-    GREEN: "Routine",
-  };
+
   return (
-    <span
-      className={clsx(
-        "inline-flex rounded-lg border px-3 py-1 text-xs font-semibold uppercase tracking-wide",
-        styles[urgency] || styles.GREEN
-      )}
-    >
-      {labels[urgency] || urgency}
-    </span>
+    <div className={clsx(className, "font-semibold")}>TRIAGE · {label}</div>
   );
 }

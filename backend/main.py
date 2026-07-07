@@ -75,8 +75,16 @@ def startup():
 
 @app.get("/api/health")
 def health():
-    provider = "groq" if os.getenv("GROQ_API_KEY") else "ollama"
-    return {"status": "ok", "engine": provider}
+    if os.getenv("GROQ_API_KEY"):
+        provider = "groq"
+        model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+    elif os.getenv("OPENAI_API_KEY"):
+        provider = "openai"
+        model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    else:
+        provider = "ollama"
+        model = os.getenv("OLLAMA_MODEL", "llama3:latest")
+    return {"status": "ok", "engine": provider, "model": model}
 
 
 @app.get("/api/patients", response_model=list[PatientOut])

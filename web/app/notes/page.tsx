@@ -1,19 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Panel from "@/components/Panel";
 import UrgencyBadge from "@/components/UrgencyBadge";
 import { fetchPatients, Patient } from "@/lib/api";
 
 export default function NotesPage() {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchPatients().then(setPatients);
+    fetchPatients()
+      .then(setPatients)
+      .catch((e) => setError(e.message));
   }, []);
+
+  if (error) {
+    return <div className="glass p-6 text-red-300">{error}</div>;
+  }
+
+  if (!patients.length) {
+    return <div className="glass p-6 text-amber-300">No clinical records available.</div>;
+  }
 
   return (
     <div className="animate-fade-up space-y-6">
-      <h2 className="text-2xl font-semibold text-white">Clinical Notes</h2>
       {patients.map((p) => (
         <div key={p.id} className="glass p-6">
           <div className="flex items-center justify-between">
@@ -22,15 +33,11 @@ export default function NotesPage() {
             </h3>
             <UrgencyBadge urgency={p.urgency} />
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-xs uppercase text-slate-500">Chief Complaint</p>
-              <p className="mt-1 text-slate-300">{p.symptoms}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-slate-500">Assessment</p>
-              <pre className="mt-1 whitespace-pre-wrap text-slate-300">{p.diagnosis}</pre>
-            </div>
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <Panel title="Chief Complaint">{p.symptoms}</Panel>
+            <Panel title="Assessment">
+              <pre className="whitespace-pre-wrap">{p.diagnosis}</pre>
+            </Panel>
           </div>
         </div>
       ))}

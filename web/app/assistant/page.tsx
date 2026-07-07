@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Panel from "@/components/Panel";
 import UrgencyBadge from "@/components/UrgencyBadge";
-import { fetchPatients, Patient, wsUrl } from "@/lib/api";
+import { askCopilot, fetchPatients, Patient } from "@/lib/api";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -11,53 +12,68 @@ export default function AssistantPage() {
   const [selected, setSelected] = useState<Patient | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [connected, setConnected] = useState(false);
-  const wsRef = useRef<WebSocket | null>(null);
+  const [thinking, setThinking] = useState(false);
+  const [error, setError] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetchPatients().then((data) => {
-      setPatients(data);
-      if (data.length) setSelected(data[0]);
-    });
+    fetchPatients()
+      .then((data) => {
+        setPatients(data);
+        if (data.length) setSelected(data[0]);
+      })
+      .catch((e) => setError(e.message));
   }, []);
 
   useEffect(() => {
-    if (!selected) return;
-    setMessages([]);
-    const ws = new WebSocket(wsUrl(selected.id));
-    wsRef.current = ws;
-    ws.onopen = () => setConnected(true);
-    ws.onclose = () => setConnected(false);
-    ws.onmessage = (ev) => {
-      const data = JSON.parse(ev.data);
-      if (data.content)
-        setMessages((m) => [...m, { role: "assistant", content: data.content }]);
-    };
-    return () => ws.close();
-  }, [selected]);
-
-  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, thinking]);
 
-  function send() {
-    if (!input.trim() || !wsRef.current) return;
-    setMessages((m) => [...m, { role: "user", content: input }]);
-    wsRef.current.send(JSON.stringify({ question: input }));
+  async function send() {
+    if (!input.trim() || !selected || thinking) return;
+    const question = input.trim();
     setInput("");
+    setMessages((m) => [...m, { role: "user", content: question }]);
+    setThinking(true);
+    try {
+      const res = await askCopilot(selected.id, question);
+      setMessages((m) => [...m, { role: "assistant", content: res.answer }]);
+    } catch (err: any) {
+      setMessages((m) => [
+        ...m,
+        {
+          role: "assistant",
+          content: `LLM unavailable: ${err.message}\n\nLocal: ollama serve · Cloud: set GROQ_API_KEY`,
+        },
+      ]);
+    } finally {
+      setThinking(false);
+    }
+  }
+
+  if (error && !patients.length) {
+    return (
+      <div className="glass p-6 text-red-300">
+        {error} — run <code>start-api.bat</code> from project root.
+      </div>
+    );
+  }
+
+  if (!patients.length) {
+    return <div className="glass p-6 text-amber-300">No active cases for consultation.</div>;
   }
 
   return (
-    <div className="animate-fade-up grid h-[calc(100vh-4rem)] grid-cols-[320px_1fr] gap-6">
+    <div className="animate-fade-up grid h-[calc(100vh-12rem)] grid-cols-[340px_1fr] gap-6">
       <div className="glass flex flex-col p-5">
         <h3 className="font-medium text-white">Active Case</h3>
         <select
-          className="mt-3 rounded-xl border border-border bg-canvas px-3 py-2 text-sm text-white"
+          className="mt-3 rounded-lg border border-border bg-canvas px-3 py-2 text-sm text-white"
           value={selected?.id ?? ""}
-          onChange={(e) =>
-            setSelected(patients.find((p) => p.id === Number(e.target.value)) || null)
-          }
+          onChange={(e) => {
+            setSelected(patients.find((p) => p.id === Number(e.target.value)) || null);
+            setMessages([]);
+          }}
         >
           {patients.map((p) => (
             <option key={p.id} value={p.id}>
@@ -66,48 +82,63 @@ export default function AssistantPage() {
           ))}
         </select>
         {selected && (
-          <div className="mt-4 space-y-3 text-sm text-slate-400">
-            <p>Age: {selected.age}</p>
-            <p>{selected.symptoms}</p>
+          <div className="mt-4 space-y-3">
+            <Panel title="Case Context">
+              <p>
+                <strong>Age:</strong> {selected.age}
+              </p>
+              <p className="mt-2">
+                <strong>Presentation:</strong>
+              </p>
+              <p className="mt-1">{selected.symptoms}</p>
+            </Panel>
             <UrgencyBadge urgency={selected.urgency} />
           </div>
         )}
-        <p className="mt-auto text-xs text-slate-500">
-          {connected ? "● Real-time connected" : "○ Connecting…"}
-        </p>
       </div>
 
       <div className="glass flex flex-col overflow-hidden">
-        <div className="border-b border-border px-5 py-4">
-          <h2 className="font-semibold text-white">Clinical Assistant</h2>
-          <p className="text-xs text-slate-500">WebSocket · live reasoning</p>
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <div>
+            <h2 className="font-semibold text-white">Real-time Clinical Assistant</h2>
+            <p className="text-xs text-[#6b8cb8]">LLM-powered case consultation</p>
+          </div>
+          <button
+            onClick={() => setMessages([])}
+            className="rounded-lg border border-border px-3 py-1.5 text-xs text-slate-400 hover:text-white"
+          >
+            Clear session
+          </button>
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto p-5">
+          {messages.length === 0 && (
+            <p className="text-sm text-[#6b8cb8]">Ask about this case…</p>
+          )}
           {messages.map((m, i) => (
-            <div
-              key={i}
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
-                m.role === "user"
-                  ? "ml-auto bg-accent text-white"
-                  : "bg-canvas text-slate-300 border border-border"
-              }`}
-            >
-              {m.content}
+            <div key={i} className={m.role === "user" ? "chat-user" : "chat-assistant"}>
+              <pre className="whitespace-pre-wrap font-sans">{m.content}</pre>
             </div>
           ))}
+          {thinking && (
+            <div className="chat-assistant">
+              <span className="text-[#6b8cb8]">Clinical reasoning…</span>
+            </div>
+          )}
           <div ref={bottomRef} />
         </div>
         <div className="flex gap-2 border-t border-border p-4">
           <input
-            className="flex-1 rounded-xl border border-border bg-canvas px-4 py-2 text-white outline-none focus:border-accent"
+            className="flex-1 rounded-lg border border-border bg-canvas px-4 py-2 text-white outline-none focus:border-accent"
             placeholder="Ask about this case…"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && send()}
+            disabled={thinking}
           />
           <button
             onClick={send}
-            className="rounded-xl bg-accent px-5 py-2 font-medium text-white hover:bg-blue-600"
+            disabled={thinking || !input.trim()}
+            className="rounded-lg bg-gradient-to-r from-[#1e4a6f] to-accent px-5 py-2 font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
             Send
           </button>

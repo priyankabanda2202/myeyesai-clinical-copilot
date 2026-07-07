@@ -1,6 +1,6 @@
 # VisionFlow Clinical Copilot
 
-Real-time **ophthalmology clinical intelligence platform** — Next.js 15 frontend + FastAPI backend + LangGraph multi-agent pipeline + Ollama/Groq LLM.
+Real-time **ophthalmology clinical intelligence platform** — Next.js 15 frontend + FastAPI backend + LangGraph multi-agent pipeline.
 
 > Fictional product name for portfolio demo. No affiliation with any commercial client.
 
@@ -8,40 +8,46 @@ Real-time **ophthalmology clinical intelligence platform** — Next.js 15 fronte
 
 | Layer | Tech |
 |-------|------|
-| Frontend | **Next.js 15**, React 19, TypeScript, Tailwind CSS, Recharts |
-| Backend | **FastAPI**, WebSockets (real-time assistant) |
-| AI | **LangGraph**, Groq (cloud) / Ollama (local) |
-| Database | SQLAlchemy, SQLite |
+| **Frontend (main)** | Next.js 15, React 19, TypeScript, Tailwind CSS, Recharts |
+| **Backend** | FastAPI, REST APIs |
+| **AI** | LangGraph, Groq (cloud) / Ollama (local) |
+| **Legacy UI** | Streamlit (`frontend/`) — local fallback only |
 
-## Live Demo
+## Live Demo (public)
 
-https://visionflow-clinical-copilot.onrender.com/
+**https://visionflow-clinical-copilot.onrender.com**
 
-## Run locally
+Deployed as FastAPI + Next.js static export (single service on Render).
 
-### Backend + Frontend (production-like)
+## Run locally (Windows)
 
-```bash
-# Terminal 1 — API
-pip install -r requirements.txt
-ollama serve   # optional if using Groq
-uvicorn backend.main:app --reload --port 8000
+### Step 1 — API (project root)
 
-# Terminal 2 — Next.js dev UI
-cd web
-npm install
-npm run dev
+Double-click **`start-api.bat`** or:
+
+```cmd
+cd C:\Users\admin\Downloads\myeyesai-clinical-copilot
+start-api.bat
 ```
 
-Open http://localhost:3000 — set `NEXT_PUBLIC_API_URL=http://localhost:8000` in `web/.env.local`
+### Step 2 — UI (project root OR web folder)
 
-### Legacy Streamlit UI (deprecated)
+Double-click **`start-web.bat`** or from `web` folder run **`start.bat`**:
 
-```bash
-streamlit run frontend/app.py
+```cmd
+cd C:\Users\admin\Downloads\myeyesai-clinical-copilot
+start-web.bat
 ```
 
-## Deploy (Render)
+Open **http://localhost:3000**
+
+> Both must run at the same time. The UI proxies API calls to port 8000 automatically.
+
+## Deploy to Render
+
+1. Push to GitHub
+2. Render reads `render.yaml` — builds Next.js + starts FastAPI
+3. Set `GROQ_API_KEY` in Render environment variables
 
 See `docs/DEPLOY.md`
 

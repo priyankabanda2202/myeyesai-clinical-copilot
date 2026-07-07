@@ -1,5 +1,3 @@
-const API = process.env.NEXT_PUBLIC_API_URL || "";
-
 export type Patient = {
   id: number;
   name: string;
@@ -16,15 +14,42 @@ export type DailyBrief = {
   green: number;
 };
 
+export type HealthInfo = {
+  status: string;
+  engine: string;
+  model: string;
+};
+
+function apiBase(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== "undefined") {
+    if (window.location.port === "3000") return "http://127.0.0.1:8000";
+    return window.location.origin;
+  }
+  return "";
+}
+
+async function apiFetch(path: string, init?: RequestInit) {
+  const res = await fetch(`${apiBase()}${path}`, init);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Request failed (${res.status})`);
+  }
+  return res;
+}
+
+export async function fetchHealth(): Promise<HealthInfo> {
+  const res = await apiFetch("/api/health");
+  return res.json();
+}
+
 export async function fetchPatients(): Promise<Patient[]> {
-  const res = await fetch(`${API}/api/patients`);
-  if (!res.ok) throw new Error("Failed to load patients");
+  const res = await apiFetch("/api/patients");
   return res.json();
 }
 
 export async function fetchDailyBrief(): Promise<DailyBrief> {
-  const res = await fetch(`${API}/api/daily-brief`);
-  if (!res.ok) throw new Error("Failed to load brief");
+  const res = await apiFetch("/api/daily-brief");
   return res.json();
 }
 
@@ -33,30 +58,19 @@ export async function submitIntake(data: {
   age: number;
   symptoms: string;
 }) {
-  const res = await fetch(`${API}/api/intake`, {
+  const res = await apiFetch("/api/intake", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || "Intake failed");
-  }
   return res.json();
 }
 
 export async function askCopilot(patientId: number, question: string) {
-  const res = await fetch(`${API}/api/copilot`, {
+  const res = await apiFetch("/api/copilot", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ patient_id: patientId, question }),
   });
-  if (!res.ok) throw new Error("Copilot request failed");
   return res.json();
-}
-
-export function wsUrl(patientId: number) {
-  const base = API || (typeof window !== "undefined" ? window.location.origin : "");
-  const wsBase = base.replace(/^http/, "ws");
-  return `${wsBase}/ws/copilot/${patientId}`;
 }

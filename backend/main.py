@@ -1,5 +1,6 @@
 import os
 import sys
+import threading
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -15,7 +16,6 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from agents.clinical_utils import extract_confidence, extract_icd10, referral_for_urgency
-from agents.copilot_agent import answer as copilot_answer
 from agents.daily_brief_agent import build_daily_brief
 from agents.text_format import clean_clinical_text
 from backend.schemas import (
@@ -43,7 +43,6 @@ from database.crud import (
 from database.db import Base, SessionLocal, engine
 from database.migrate import migrate_db
 from database.models import Patient
-from workflows.clinical_workflow import run_clinical_workflow
 import database.models  # noqa: F401
 
 Base.metadata.create_all(bind=engine)
@@ -62,6 +61,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+API_ONLY = os.getenv("VISIONFLOW_API_ONLY", "").lower() in {"1", "true", "yes"}
 
 URGENCY_ORDER = {"RED": 0, "YELLOW": 1, "GREEN": 2}
 SCHEDULING_MAP = {
@@ -117,16 +118,27 @@ def build_pipeline_trace(result: dict) -> list[PipelineStep]:
 
 
 @app.on_event("startup")
-def check_frontend():
-    db = SessionLocal()
-    try:
-        seed_if_empty(db)
-    finally:
-        db.close()
-    if static_dir.exists():
+def on_startup():
+    def _seed():
+        db = SessionLocal()
+        try:
+            seed_if_empty(db)
+        finally:
+            db.close()
+
+    threading.Thread(target=_seed, daemon=True).start()
+
+    if API_ONLY:
+        print("VisionFlow API-only mode")
+    elif static_dir.exists():
         print(f"Frontend: serving Next.js from {static_dir}")
     else:
         print(f"WARNING: {static_dir} not found — run build.sh before deploy")
+
+
+@app.get("/api/ping")
+def ping():
+    return {"status": "ok"}
 
 
 @app.get("/api/health")
@@ -248,6 +260,8 @@ def scheduling_desk():
 
 @app.post("/api/intake", response_model=IntakeResponse)
 def intake(body: IntakeRequest):
+    from workflows.clinical_workflow import run_clinical_workflow
+
     db = SessionLocal()
     try:
         result = run_clinical_workflow(
@@ -309,6 +323,8 @@ def intake(body: IntakeRequest):
 
 @app.post("/api/copilot", response_model=CopilotResponse)
 def copilot_chat(body: CopilotRequest):
+    from agents.copilot_agent import answer as copilot_answer
+
     db = SessionLocal()
     try:
         patient = db.query(Patient).filter(Patient.id == body.patient_id).first()
@@ -331,6 +347,8 @@ def copilot_chat(body: CopilotRequest):
 
 @app.websocket("/ws/copilot/{patient_id}")
 async def copilot_ws(websocket: WebSocket, patient_id: int):
+    from agents.copilot_agent import answer as copilot_answer
+
     await websocket.accept()
     db = SessionLocal()
     try:
@@ -357,5 +375,5 @@ async def copilot_ws(websocket: WebSocket, patient_id: int):
         db.close()
 
 
-if static_dir.exists():
+if not API_ONLY and static_dir.exists():
     app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="frontend")

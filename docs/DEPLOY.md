@@ -11,20 +11,32 @@
 | Start | `uvicorn backend.main:app --host 0.0.0.0 --port $PORT` |
 | Env | `GROQ_API_KEY` (required for cloud LLM) |
 
-Live URL: **https://visionflow-clinical-copilot.onrender.com**
+Live URL: **https://visionflow-clinical-copilot.onrender.com** (static UI — instant load)
 
-## Render cold start (free tier)
+API URL: **https://visionflow-api.onrender.com** (ping this to keep warm)
 
-Render sleeps after 15 minutes of no traffic. First load can take 30–60 seconds.
+## Architecture (instant UI)
 
-**Free fix — UptimeRobot (no GitHub workflow needed):**
+| Service | Type | URL |
+|---------|------|-----|
+| `visionflow-clinical-copilot` | **Static site** | Main link — UI loads immediately |
+| `visionflow-api` | **Web service** | Backend API only |
 
-1. Sign up at [uptimerobot.com](https://uptimerobot.com)
-2. Add monitor → **HTTP(s)**
-3. URL: `https://visionflow-clinical-copilot.onrender.com/api/health`
-4. Interval: **5 minutes**
+After pushing `render.yaml`, open Render Dashboard → **Blueprint** → sync, or manually add the static site + API service.
 
-**Paid fix:** Render Starter (~$7/mo) — no sleep, no cold starts.
+**Keep API warm (free, 2 min):** See **[docs/UPTIME_SETUP.md](UPTIME_SETUP.md)**
+
+## Render cold start (free tier API only)
+
+The **UI no longer cold-starts** — only the API can sleep. UptimeRobot ping:
+
+```
+https://visionflow-api.onrender.com/api/ping
+```
+
+Every **5 minutes**.
+
+**Paid fix:** Render Starter (~$7/mo) on `visionflow-api` — no sleep.
 
 ## Local development
 

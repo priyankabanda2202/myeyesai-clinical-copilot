@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import { fetchHealth } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 
-const MAX_ATTEMPTS = 12;
-const RETRY_MS = 5000;
+const MAX_ATTEMPTS = 15;
+const RETRY_MS = 3000;
 
 export default function ColdStartGuard({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [message, setMessage] = useState("Connecting to clinical systems…");
 
   useEffect(() => {
     let cancelled = false;
@@ -19,10 +18,6 @@ export default function ColdStartGuard({ children }: { children: React.ReactNode
     async function wake() {
       for (let i = 1; i <= MAX_ATTEMPTS && !cancelled; i++) {
         setAttempt(i);
-        if (i === 1) setMessage("Connecting to clinical systems…");
-        else if (i <= 3) setMessage("Starting hospital platform services…");
-        else setMessage("Almost ready — servers are coming online…");
-
         try {
           await fetchHealth();
           if (!cancelled) setReady(true);
@@ -43,26 +38,26 @@ export default function ColdStartGuard({ children }: { children: React.ReactNode
     };
   }, []);
 
-  if (ready) return <>{children}</>;
-
-  const progress = Math.min(100, Math.round((attempt / MAX_ATTEMPTS) * 100));
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#060b14]">
-      <div className="mx-4 w-full max-w-md rounded-2xl border border-accent/20 bg-panel/90 p-8 text-center backdrop-blur-xl">
-        <Loader2 className="mx-auto h-10 w-10 animate-spin text-accent-glow" />
-        <h2 className="mt-4 text-lg font-semibold text-white">VisionFlow Eye Institute</h2>
-        <p className="mt-2 text-sm text-slate-400">{message}</p>
-        <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-canvas">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-accent to-live transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
+    <>
+      {!ready && (
+        <div className="fixed left-0 right-0 top-0 z-[100] border-b border-accent/30 bg-[#0a1628]/95 px-4 py-2.5 backdrop-blur-md md:top-12">
+          <div className="mx-auto flex max-w-3xl items-center gap-3">
+            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-live" />
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-white">Connecting to clinical systems…</p>
+              <div className="mt-1 h-1 overflow-hidden rounded-full bg-canvas">
+                <div
+                  className="h-full rounded-full bg-live transition-all duration-300"
+                  style={{ width: `${Math.min(100, Math.round((attempt / MAX_ATTEMPTS) * 100))}%` }}
+                />
+              </div>
+            </div>
+            <span className="hidden text-[10px] text-slate-500 sm:inline">UI loaded · API waking up</span>
+          </div>
         </div>
-        <p className="mt-4 text-[11px] text-slate-500">
-          Secure clinical platform · First load may take up to 60 seconds
-        </p>
-      </div>
-    </div>
+      )}
+      <div className={!ready ? "pt-12 md:pt-14" : ""}>{children}</div>
+    </>
   );
 }

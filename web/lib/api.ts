@@ -70,12 +70,18 @@ function apiBase(): string {
 }
 
 async function apiFetch(path: string, init?: RequestInit) {
-  const res = await fetch(`${apiBase()}${path}`, init);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Request failed (${res.status})`);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+  try {
+    const res = await fetch(`${apiBase()}${path}`, { ...init, signal: controller.signal });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Request failed (${res.status})`);
+    }
+    return res;
+  } finally {
+    clearTimeout(timeout);
   }
-  return res;
 }
 
 export async function fetchHealth(): Promise<HealthInfo> {

@@ -3,6 +3,7 @@ import ClinicalHeader from "@/components/ClinicalHeader";
 import HospitalStatusBar from "@/components/HospitalStatusBar";
 import AppFooter from "@/components/AppFooter";
 import ColdStartGuard from "@/components/ColdStartGuard";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import { BranchProvider } from "@/lib/branchContext";
 import { NavProvider } from "@/lib/navContext";
 import "./globals.css";
@@ -21,6 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
       </head>
       <body>
         <div className="app-bg" />
@@ -29,12 +32,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <BranchProvider>
             <NavProvider>
               <Sidebar />
-              <main className="relative z-10 min-h-screen w-full max-w-full overflow-x-hidden px-3 pb-6 pt-[4.25rem] md:ml-[272px] md:px-8 md:pb-8 md:pt-8">
+              <main className="relative z-10 min-h-screen w-full max-w-full overflow-x-hidden px-3 pb-20 pt-[4.25rem] md:ml-[272px] md:px-8 md:pb-8 md:pt-8">
                 <ClinicalHeader />
                 <HospitalStatusBar />
                 {children}
                 <AppFooter />
               </main>
+              <MobileBottomNav />
             </NavProvider>
           </BranchProvider>
         </ColdStartGuard>

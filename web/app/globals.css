@@ -136,3 +136,29 @@ body {
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+/* Mobile: force hide desktop sidebar, full-width content (works even with stale CSS cache) */
+@media (max-width: 767px) {
+  .vf-desktop-nav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .vf-mobile-drawer:not(.translate-x-0) {
+    transform: translateX(-100%) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-bottom: 5rem !important;
+  }
+
+  aside.fixed.left-0:not(.vf-mobile-drawer):not(.vf-bottom-nav) {
+    display: none !important;
+  }
+}

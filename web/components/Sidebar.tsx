@@ -207,7 +207,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile top bar — menu hidden until tapped */}
-      <div className="fixed left-0 right-0 top-0 z-30 flex items-center justify-between border-b border-border/60 bg-[#060b14]/95 px-4 py-3 backdrop-blur-xl md:hidden">
+      <div className="vf-mobile-topbar fixed left-0 right-0 top-0 z-30 flex items-center justify-between border-b border-border/60 bg-[#060b14]/95 px-4 py-3 backdrop-blur-xl md:hidden">
         <button
           type="button"
           onClick={toggle}
@@ -239,15 +239,15 @@ export default function Sidebar() {
       <aside
         aria-hidden={!open}
         className={clsx(
-          "fixed left-0 top-0 z-50 flex h-[100dvh] w-[85vw] max-w-[300px] flex-col border-r border-border/60 bg-[#060b14] p-4 shadow-2xl transition-transform duration-300 ease-out md:hidden",
+          "vf-mobile-drawer fixed left-0 top-0 z-50 flex h-[100dvh] w-[85vw] max-w-[300px] flex-col border-r border-border/60 bg-[#060b14] p-4 shadow-2xl transition-transform duration-300 ease-out md:hidden",
           open ? "translate-x-0" : "-translate-x-full pointer-events-none invisible"
         )}
       >
         <SidebarPanel {...panelProps} showClose onClose={closeMenu} />
       </aside>
 
-      {/* Desktop sidebar — always visible, never on mobile */}
-      <aside className="fixed left-0 top-0 z-20 hidden h-screen w-[272px] flex-col border-r border-border/60 bg-[#060b14]/95 p-5 backdrop-blur-2xl md:flex">
+      {/* Desktop sidebar — never shown on phone */}
+      <aside className="vf-desktop-nav fixed left-0 top-0 z-20 hidden h-screen w-[272px] flex-col border-r border-border/60 bg-[#060b14]/95 p-5 backdrop-blur-2xl md:flex">
         <SidebarPanel {...panelProps} />
       </aside>
     </>

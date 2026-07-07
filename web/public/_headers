@@ -1,0 +1,11 @@
+/*
+  Prevent stale HTML on Render static — always fetch fresh shell after deploy
+*/
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate

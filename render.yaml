@@ -1,27 +1,11 @@
 services:
-  # Static site — loads instantly (no cold start). This keeps your main URL fast.
   - type: web
     name: visionflow-clinical-copilot
-    runtime: static
-    buildCommand: bash build-frontend.sh
-    staticPublishPath: web/out
-    envVars:
-      - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: visionflow-api
-          envVarKey: RENDER_EXTERNAL_URL
-
-  # API only — may cold-start on free tier; use UptimeRobot ping to keep warm.
-  - type: web
-    name: visionflow-api
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: bash build.sh
     startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: VISIONFLOW_API_ONLY
-        value: "true"
       - key: GROQ_MODEL
         value: llama-3.1-8b-instant
       - key: GROQ_API_KEY

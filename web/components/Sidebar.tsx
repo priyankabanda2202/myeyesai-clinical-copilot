@@ -6,9 +6,11 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import {
   Activity,
+  ClipboardList,
   FileText,
   LayoutDashboard,
   MessageSquare,
+  Shield,
   Stethoscope,
   Sun,
 } from "lucide-react";
@@ -21,6 +23,8 @@ const links = [
   { href: "/reports/", label: "Reports", icon: Activity },
   { href: "/brief/", label: "Daily Brief", icon: Sun },
   { href: "/assistant/", label: "Clinical Assistant", icon: MessageSquare },
+  { href: "/audit/", label: "Audit Trail", icon: ClipboardList },
+  { href: "/compliance/", label: "Compliance", icon: Shield },
 ];
 
 export default function Sidebar() {

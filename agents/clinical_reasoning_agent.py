@@ -15,12 +15,15 @@ Rules:
 - Use numbered sections with clear headings on their own line
 - Use blank lines between sections
 - Write in concise, professional clinical language
+- Reference AAO Preferred Practice Patterns where relevant (by name only)
 
 Required sections:
 1. Primary Diagnosis
 2. Differential Diagnosis
 3. Recommended Workup
-4. Clinical Confidence (percentage with brief rationale)
-5. Recommendation
+4. Clinical Confidence (state as percentage with brief rationale, e.g. 75 percent)
+5. ICD-10 Codes (list likely codes with brief labels)
+6. Guideline Alignment (which AAO or standard pathway applies)
+7. Recommendation and Referral Action
 """
     return clean_clinical_text(chat(prompt))

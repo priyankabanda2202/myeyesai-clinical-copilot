@@ -5,8 +5,26 @@ export type Patient = {
   symptoms: string;
   diagnosis: string | null;
   urgency: string | null;
+  laterality?: string;
+  visual_acuity?: string;
+  iop?: string;
+  duration?: string;
+  comorbidities?: string;
+  icd10_codes?: string;
+  confidence_pct?: number;
+  review_status?: string;
+  reviewer_note?: string;
+  reviewed_at?: string;
+  referral_action?: string;
   doctor_report?: string | null;
   patient_education?: string | null;
+};
+
+export type PipelineStep = {
+  agent: string;
+  label: string;
+  status: string;
+  output_preview: string;
 };
 
 export type PriorityCase = {
@@ -26,10 +44,20 @@ export type DailyBrief = {
   priority_cases: PriorityCase[];
 };
 
+export type AuditEntry = {
+  id: number;
+  patient_id: number | null;
+  event_type: string;
+  detail: string;
+  created_at: string;
+};
+
 export type HealthInfo = {
   status: string;
   engine: string;
   model: string;
+  version?: string;
+  compliance?: string;
 };
 
 function apiBase(): string {
@@ -65,15 +93,38 @@ export async function fetchDailyBrief(): Promise<DailyBrief> {
   return res.json();
 }
 
+export async function fetchAuditTrail(): Promise<AuditEntry[]> {
+  const res = await apiFetch("/api/audit");
+  return res.json();
+}
+
 export async function submitIntake(data: {
   name: string;
   age: number;
   symptoms: string;
+  laterality?: string;
+  visual_acuity?: string;
+  iop?: string;
+  duration?: string;
+  comorbidities?: string;
 }) {
   const res = await apiFetch("/api/intake", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+export async function submitAttestation(
+  patientId: number,
+  status: string,
+  note: string = ""
+) {
+  const res = await apiFetch(`/api/patients/${patientId}/attestation`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status, note }),
   });
   return res.json();
 }

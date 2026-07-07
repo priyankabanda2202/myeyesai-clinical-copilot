@@ -69,3 +69,11 @@ body {
 .clinical-text {
   @apply text-slate-300;
 }
+
+.field-input {
+  @apply w-full rounded-lg border border-border bg-canvas px-4 py-2.5 text-white outline-none focus:border-accent;
+}
+
+.btn-primary {
+  @apply rounded-lg bg-gradient-to-r from-[#1e4a6f] to-accent py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50;
+}

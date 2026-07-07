@@ -14,26 +14,42 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
+from agents.clinical_utils import extract_confidence, extract_icd10, referral_for_urgency
 from agents.copilot_agent import answer as copilot_answer
 from agents.daily_brief_agent import build_daily_brief
 from agents.text_format import clean_clinical_text
 from backend.schemas import (
+    AttestationRequest,
+    AuditEntry,
     CopilotRequest,
     CopilotResponse,
     DailyBrief,
     IntakeRequest,
     IntakeResponse,
     PatientOut,
+    PipelineStep,
 )
-from database.crud import create_patient, patient_with_reports
+from database.crud import (
+    create_patient,
+    list_audit_logs,
+    log_event,
+    patient_with_reports,
+    save_attestation,
+)
 from database.db import Base, SessionLocal, engine
+from database.migrate import migrate_db
 from database.models import Patient
 from workflows.clinical_workflow import run_clinical_workflow
 import database.models  # noqa: F401
 
 Base.metadata.create_all(bind=engine)
+migrate_db()
 
-app = FastAPI(title="VisionFlow Clinical Copilot API", version="2.0.0")
+app = FastAPI(
+    title="VisionFlow Clinical Copilot API",
+    version="2.1.0",
+    description="Ophthalmology clinical decision support — stakeholder evaluation platform",
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,7 +60,6 @@ app.add_middleware(
 )
 
 URGENCY_ORDER = {"RED": 0, "YELLOW": 1, "GREEN": 2}
-
 static_dir = ROOT / "web" / "out"
 
 
@@ -61,6 +76,35 @@ def valid_patients(db: Session):
         .all()
     )
     return sorted(patients, key=lambda p: URGENCY_ORDER.get(p.urgency or "GREEN", 3))
+
+
+def build_pipeline_trace(result: dict) -> list[PipelineStep]:
+    previews = {
+        "intake": result.get("summary", "")[:200],
+        "clinical_reasoning": result.get("analysis", "")[:200],
+        "urgency": f"Triage level: {result.get('urgency', 'GREEN')}",
+        "report": result.get("doctor_report", "")[:200],
+        "patient_education": result.get("patient_education", "")[:200],
+        "daily_brief": result.get("brief", "")[:200],
+    }
+    labels = {
+        "intake": "Intake Agent",
+        "clinical_reasoning": "Clinical Reasoning Agent",
+        "urgency": "Urgency Stratification Agent",
+        "report": "Report Generation Agent",
+        "patient_education": "Patient Education Agent",
+        "daily_brief": "Daily Brief Agent",
+    }
+    order = ["intake", "clinical_reasoning", "urgency", "report", "patient_education", "daily_brief"]
+    return [
+        PipelineStep(
+            agent=key,
+            label=labels[key],
+            status="complete",
+            output_preview=previews.get(key, ""),
+        )
+        for key in order
+    ]
 
 
 @app.on_event("startup")
@@ -87,7 +131,13 @@ def health():
     else:
         provider = "ollama"
         model = os.getenv("OLLAMA_MODEL", "llama3:latest")
-    return {"status": "ok", "engine": provider, "model": model}
+    return {
+        "status": "ok",
+        "engine": provider,
+        "model": model,
+        "version": "2.1.0",
+        "compliance": "synthetic-data-only",
+    }
 
 
 @app.get("/api/patients", response_model=list[PatientOut])
@@ -120,14 +170,49 @@ def daily_brief():
         db.close()
 
 
+@app.get("/api/audit", response_model=list[AuditEntry])
+def audit_trail():
+    db = SessionLocal()
+    try:
+        return list_audit_logs(db)
+    finally:
+        db.close()
+
+
+@app.post("/api/patients/{patient_id}/attestation", response_model=PatientOut)
+def attestation(patient_id: int, body: AttestationRequest):
+    db = SessionLocal()
+    try:
+        if body.status not in {"accepted", "modified", "rejected", "pending"}:
+            raise HTTPException(status_code=400, detail="Invalid attestation status")
+        patient = save_attestation(db, patient_id, body.status, body.note)
+        if not patient:
+            raise HTTPException(status_code=404, detail="Patient not found")
+        return patient_with_reports(db, patient)
+    finally:
+        db.close()
+
+
 @app.post("/api/intake", response_model=IntakeResponse)
 def intake(body: IntakeRequest):
     db = SessionLocal()
     try:
-        result = run_clinical_workflow(body.name, body.age, body.symptoms)
+        result = run_clinical_workflow(
+            body.name,
+            body.age,
+            body.symptoms,
+            body.laterality,
+            body.visual_acuity,
+            body.iop,
+            body.duration,
+            body.comorbidities,
+        )
         analysis = clean_clinical_text(result["analysis"])
         doctor_report = clean_clinical_text(result.get("doctor_report", ""))
         patient_education = clean_clinical_text(result.get("patient_education", ""))
+        icd10 = extract_icd10(analysis) or extract_icd10(doctor_report)
+        confidence = extract_confidence(analysis)
+        referral = referral_for_urgency(result["urgency"])
 
         patient = create_patient(
             db,
@@ -138,6 +223,14 @@ def intake(body: IntakeRequest):
             result["urgency"],
             doctor_report=doctor_report,
             patient_education=patient_education,
+            laterality=body.laterality,
+            visual_acuity=body.visual_acuity,
+            iop=body.iop,
+            duration=body.duration,
+            comorbidities=body.comorbidities,
+            icd10_codes=icd10,
+            confidence_pct=confidence,
+            referral_action=referral,
         )
         patient_data = patient_with_reports(db, patient)
 
@@ -147,6 +240,10 @@ def intake(body: IntakeRequest):
             urgency=result["urgency"],
             doctor_report=doctor_report,
             patient_education=patient_education,
+            icd10_codes=icd10,
+            confidence_pct=confidence,
+            referral_action=referral,
+            pipeline_trace=build_pipeline_trace(result),
             patient=PatientOut(**patient_data),
         )
     except Exception as exc:
@@ -164,6 +261,12 @@ def copilot_chat(body: CopilotRequest):
             raise HTTPException(status_code=404, detail="Patient not found")
         try:
             response = copilot_answer(body.question, patient)
+            log_event(
+                db,
+                "copilot_query",
+                f"Q: {body.question[:120]}",
+                body.patient_id,
+            )
         except Exception as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
         return CopilotResponse(answer=response)
@@ -189,6 +292,7 @@ async def copilot_ws(websocket: WebSocket, patient_id: int):
                 continue
             try:
                 response = copilot_answer(question, patient)
+                log_event(db, "copilot_query", f"Q: {question[:120]}", patient_id)
                 await websocket.send_json({"role": "assistant", "content": response})
             except Exception as exc:
                 await websocket.send_json({"role": "assistant", "content": f"Error: {exc}"})

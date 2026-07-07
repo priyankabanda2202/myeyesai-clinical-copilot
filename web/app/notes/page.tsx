@@ -76,6 +76,12 @@ export default function NotesPage() {
               <ClinicalText text={p.diagnosis} />
             </Panel>
           </div>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
+            <span>VA: {p.visual_acuity || "—"}</span>
+            <span>IOP: {p.iop || "—"}</span>
+            <span>Review: {p.review_status || "pending"}</span>
+            {p.icd10_codes && <span className="text-live">ICD-10: {p.icd10_codes}</span>}
+          </div>
         </div>
       ))}
     </div>

@@ -13,6 +13,11 @@ class ClinicalState(TypedDict, total=False):
     name: str
     age: int
     symptoms: str
+    laterality: str
+    visual_acuity: str
+    iop: str
+    duration: str
+    comorbidities: str
     summary: str
     analysis: str
     urgency: str
@@ -26,6 +31,11 @@ def intake_node(state: ClinicalState) -> ClinicalState:
         state["name"],
         state["age"],
         state["symptoms"],
+        state.get("laterality", "OU"),
+        state.get("visual_acuity", ""),
+        state.get("iop", ""),
+        state.get("duration", ""),
+        state.get("comorbidities", ""),
     )
     return state
 
@@ -90,11 +100,25 @@ def build_clinical_workflow():
 clinical_workflow = build_clinical_workflow()
 
 
-def run_clinical_workflow(name: str, age: int, symptoms: str) -> ClinicalState:
+def run_clinical_workflow(
+    name: str,
+    age: int,
+    symptoms: str,
+    laterality: str = "OU",
+    visual_acuity: str = "",
+    iop: str = "",
+    duration: str = "",
+    comorbidities: str = "",
+) -> ClinicalState:
     return clinical_workflow.invoke(
         {
             "name": name,
             "age": age,
             "symptoms": symptoms,
+            "laterality": laterality,
+            "visual_acuity": visual_acuity,
+            "iop": iop,
+            "duration": duration,
+            "comorbidities": comorbidities,
         }
     )

@@ -2,22 +2,24 @@
 
 import Link from "next/link";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Activity, AlertTriangle, Clock, Users } from "lucide-react";
+import { Activity, AlertTriangle, Clock, DollarSign, TrendingUp, Users } from "lucide-react";
 import LiveActivityFeed from "@/components/LiveActivityFeed";
 import LiveStatusBar from "@/components/LiveStatusBar";
 import LiveTriageQueue from "@/components/LiveTriageQueue";
 import PremiumMetricCard from "@/components/PremiumMetricCard";
 import UrgencyBadge from "@/components/UrgencyBadge";
+import ValuePropositionBanner from "@/components/ValuePropositionBanner";
 import { useLiveData } from "@/hooks/useLiveData";
-
-const QUICK_ACTIONS = [
-  { href: "/live/", label: "Live Triage Board", desc: "Real-time emergency lanes" },
-  { href: "/intake/", label: "New Intake", desc: "Submit or load demo case" },
-  { href: "/assistant/", label: "Clinical Assistant", desc: "Live case consultation" },
-];
+import { useEffect, useState } from "react";
+import { fetchOperations, PracticeOperations } from "@/lib/api";
 
 export default function DashboardPage() {
   const { brief, patients, activity, lastSync, connected, loading, refresh } = useLiveData(5000);
+  const [ops, setOps] = useState<PracticeOperations | null>(null);
+
+  useEffect(() => {
+    fetchOperations().then(setOps).catch(() => null);
+  }, [brief?.total]);
 
   const chartData = [
     { name: "Critical", value: brief?.red ?? 0, fill: "#ef4444" },
@@ -28,21 +30,28 @@ export default function DashboardPage() {
   return (
     <div className="animate-fade-up space-y-6">
       <LiveStatusBar connected={connected} lastSync={lastSync} onRefresh={refresh} />
+      <ValuePropositionBanner />
 
       <div className="grid grid-cols-4 gap-4">
-        <PremiumMetricCard label="Active Caseload" value={brief?.total ?? 0} icon={Users} accent="#3b82f6" loading={loading} />
-        <PremiumMetricCard label="Critical" value={brief?.red ?? 0} icon={AlertTriangle} accent="#ef4444" loading={loading} pulse={(brief?.red ?? 0) > 0} />
-        <PremiumMetricCard label="Urgent" value={brief?.yellow ?? 0} icon={Clock} accent="#f59e0b" loading={loading} />
-        <PremiumMetricCard label="Routine" value={brief?.green ?? 0} icon={Activity} accent="#22c55e" loading={loading} />
+        <PremiumMetricCard label="Hours Saved" value={Math.round(ops?.hours_saved_total ?? 0)} icon={Clock} accent="#10b981" loading={loading} />
+        <PremiumMetricCard label="Revenue Pipeline ($K)" value={Math.round((ops?.revenue_pipeline_usd ?? 0) / 1000)} icon={DollarSign} accent="#d4a853" loading={loading} />
+        <PremiumMetricCard label="Automation" value={ops?.automation_rate_percent ?? 0} icon={TrendingUp} accent="#3b82f6" loading={loading} />
+        <PremiumMetricCard label="Active Caseload" value={brief?.total ?? 0} icon={Users} accent="#8b5cf6" loading={loading} />
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        {QUICK_ACTIONS.map((a) => (
-          <Link key={a.href} href={a.href} className="glass-hover group p-5">
-            <p className="font-semibold text-white group-hover:text-accent-glow">{a.label}</p>
-            <p className="mt-1 text-xs text-slate-400">{a.desc}</p>
-          </Link>
-        ))}
+        <Link href="/operations/" className="glass-hover group p-5">
+          <p className="font-semibold text-gold group-hover:text-yellow-300">Practice ROI Hub →</p>
+          <p className="mt-1 text-xs text-slate-400">Time saved, revenue capture, automation breakdown</p>
+        </Link>
+        <Link href="/live/" className="glass-hover group p-5">
+          <p className="font-semibold text-white group-hover:text-live">Live Triage Board →</p>
+          <p className="mt-1 text-xs text-slate-400">Real-time emergency & urgent lanes</p>
+        </Link>
+        <Link href="/intake/" className="glass-hover group p-5">
+          <p className="font-semibold text-white group-hover:text-accent-glow">Automate New Case →</p>
+          <p className="mt-1 text-xs text-slate-400">38 min saved per intake — demo ready</p>
+        </Link>
       </div>
 
       <div>
@@ -72,19 +81,15 @@ export default function DashboardPage() {
 
       {brief?.priority_cases && brief.priority_cases.length > 0 && (
         <div className="glass p-6">
-          <h3 className="font-semibold text-white">Priority Cases — Action Required</h3>
+          <h3 className="font-semibold text-white">High-Value Cases — Revenue at Risk if Missed</h3>
           <div className="mt-4 space-y-2">
             {brief.priority_cases.slice(0, 5).map((p) => (
-              <Link
-                key={p.id}
-                href={`/reports/?id=${p.id}`}
-                className="live-queue-item"
-              >
+              <Link key={p.id} href={`/reports/?id=${p.id}`} className="live-queue-item">
                 <div>
                   <p className="font-medium text-white">{p.name} · {p.age}y</p>
                   <p className="text-xs text-slate-400">{p.symptoms}</p>
                 </div>
-                <UrgencyBadge urgency={p.urgency} />
+                <UrgencyBadge urgency={p.urgency} compact />
               </Link>
             ))}
           </div>

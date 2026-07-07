@@ -56,6 +56,18 @@ class IntakeRequest(BaseModel):
     comorbidities: str = ""
 
 
+class AutomationSummary(BaseModel):
+    tasks_automated: list[str]
+    manual_baseline_minutes: int
+    automated_minutes: int
+    time_saved_minutes: int
+    time_saved_percent: int
+    scheduling_recommendation: str
+    revenue_signals: list[str]
+    estimated_revenue_usd: int
+    staff_hours_freed: float
+
+
 class IntakeResponse(BaseModel):
     summary: str
     analysis: str
@@ -66,6 +78,7 @@ class IntakeResponse(BaseModel):
     confidence_pct: int
     referral_action: str
     pipeline_trace: list[PipelineStep]
+    automation: AutomationSummary
     patient: PatientOut
 
     @field_validator("analysis", "doctor_report", "patient_education")
@@ -108,3 +121,18 @@ class AuditEntry(BaseModel):
     event_type: str
     detail: str
     created_at: str
+
+
+class PracticeOperations(BaseModel):
+    cases_automated: int
+    minutes_saved_total: int
+    hours_saved_total: float
+    staff_capacity_gain_percent: int
+    revenue_pipeline_usd: int
+    revenue_at_risk_prevented_usd: int
+    automation_rate_percent: int
+    charts_auto_drafted: int
+    physician_reviews_pending: int
+    avg_time_per_case_minutes: int
+    throughput_gain_percent: int
+    monthly_projection_usd: int

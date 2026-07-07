@@ -23,7 +23,7 @@ export default function ClinicalHeader() {
             VisionFlow Eye Hospital Command Center
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Real-time triage · Multi-agent reasoning · Physician-governed AI
+            Ophthalmology CDS · Save time · Grow revenue · Automate workflows
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">

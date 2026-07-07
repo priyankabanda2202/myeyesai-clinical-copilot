@@ -129,6 +129,26 @@ export async function submitAttestation(
   return res.json();
 }
 
+export type PracticeOperations = {
+  cases_automated: number;
+  minutes_saved_total: number;
+  hours_saved_total: number;
+  staff_capacity_gain_percent: number;
+  revenue_pipeline_usd: number;
+  revenue_at_risk_prevented_usd: number;
+  automation_rate_percent: number;
+  charts_auto_drafted: number;
+  physician_reviews_pending: number;
+  avg_time_per_case_minutes: number;
+  throughput_gain_percent: number;
+  monthly_projection_usd: number;
+};
+
+export async function fetchOperations(): Promise<PracticeOperations> {
+  const res = await apiFetch("/api/operations");
+  return res.json();
+}
+
 export function wsUrl(patientId: number) {
   const base = apiBase();
   const wsBase = base.replace(/^http/, "ws");

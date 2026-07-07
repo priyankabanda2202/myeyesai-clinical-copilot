@@ -21,6 +21,7 @@ from agents.text_format import clean_clinical_text
 from backend.schemas import (
     AttestationRequest,
     AuditEntry,
+    AutomationSummary,
     CopilotRequest,
     CopilotResponse,
     DailyBrief,
@@ -28,7 +29,9 @@ from backend.schemas import (
     IntakeResponse,
     PatientOut,
     PipelineStep,
+    PracticeOperations,
 )
+from agents.operations_agent import build_practice_operations, generate_automation_summary
 from database.crud import (
     create_patient,
     list_audit_logs,
@@ -193,6 +196,15 @@ def attestation(patient_id: int, body: AttestationRequest):
         db.close()
 
 
+@app.get("/api/operations", response_model=PracticeOperations)
+def practice_operations():
+    db = SessionLocal()
+    try:
+        return build_practice_operations(valid_patients(db))
+    finally:
+        db.close()
+
+
 @app.post("/api/intake", response_model=IntakeResponse)
 def intake(body: IntakeRequest):
     db = SessionLocal()
@@ -213,6 +225,7 @@ def intake(body: IntakeRequest):
         icd10 = extract_icd10(analysis) or extract_icd10(doctor_report)
         confidence = extract_confidence(analysis)
         referral = referral_for_urgency(result["urgency"])
+        automation = generate_automation_summary(body.name, result["urgency"], icd10, referral)
 
         patient = create_patient(
             db,
@@ -244,6 +257,7 @@ def intake(body: IntakeRequest):
             confidence_pct=confidence,
             referral_action=referral,
             pipeline_trace=build_pipeline_trace(result),
+            automation=AutomationSummary(**automation),
             patient=PatientOut(**patient_data),
         )
     except Exception as exc:

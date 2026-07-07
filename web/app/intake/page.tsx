@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import AgentTrace from "@/components/AgentTrace";
 import AttestationBar from "@/components/AttestationBar";
+import AutomationPanel from "@/components/AutomationPanel";
 import ClinicalText from "@/components/ClinicalText";
 import ConfidenceBadge from "@/components/ConfidenceBadge";
 import Icd10Badge from "@/components/Icd10Badge";
@@ -21,7 +22,7 @@ const PIPELINE_STEPS = [
   "Patient education",
 ];
 
-type ResultTab = "assessment" | "report" | "education" | "trace";
+type ResultTab = "automation" | "assessment" | "report" | "education" | "trace";
 
 export default function IntakePage() {
   const [name, setName] = useState("");
@@ -44,7 +45,7 @@ export default function IntakePage() {
     setError("");
     setResult(null);
     setStep(0);
-    setTab("assessment");
+    setTab("automation");
 
     const timer = setInterval(() => {
       setStep((s) => Math.min(s + 1, PIPELINE_STEPS.length - 1));
@@ -149,13 +150,14 @@ export default function IntakePage() {
             required
           />
           <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? "Running clinical pipeline…" : "Run Clinical Pipeline"}
+            {loading ? "Automating clinical workflow…" : "Run Automated Pipeline"}
           </button>
         </form>
       </div>
 
       <div className="glass p-6">
-        <h2 className="text-lg font-semibold text-white">Pipeline Output</h2>
+        <h2 className="text-lg font-semibold text-white">Automated Pipeline Output</h2>
+        <p className="mt-1 text-xs text-slate-500">Each case saves ~38 min and captures billing-ready documentation</p>
 
         {loading && (
           <div className="mt-6 space-y-3">
@@ -185,6 +187,7 @@ export default function IntakePage() {
             <div className="flex flex-wrap gap-2 border-b border-border pb-2">
               {(
                 [
+                  ["automation", "Time & Revenue"],
                   ["assessment", "Assessment"],
                   ["report", "Attending Report"],
                   ["education", "Patient Education"],
@@ -204,6 +207,9 @@ export default function IntakePage() {
               ))}
             </div>
 
+            {tab === "automation" && result.automation && (
+              <AutomationPanel data={result.automation} />
+            )}
             {tab === "assessment" && (
               <Panel title="Clinical Assessment">
                 <ClinicalText text={result.analysis} />

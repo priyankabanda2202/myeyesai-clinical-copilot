@@ -15,12 +15,14 @@ import {
   Shield,
   Stethoscope,
   Sun,
+  TrendingUp,
 } from "lucide-react";
 import { fetchHealth } from "@/lib/api";
 
 const links = [
   { href: "/", label: "Command Center", icon: LayoutDashboard },
-  { href: "/live/", label: "Live Triage Board", icon: Radio, highlight: true },
+  { href: "/operations/", label: "Practice ROI", icon: TrendingUp, highlight: true },
+  { href: "/live/", label: "Live Triage Board", icon: Radio },
   { href: "/intake/", label: "Patient Intake", icon: Stethoscope },
   { href: "/notes/", label: "Clinical Notes", icon: FileText },
   { href: "/reports/", label: "Reports", icon: Activity },

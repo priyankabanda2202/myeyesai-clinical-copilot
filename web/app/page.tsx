@@ -1,82 +1,87 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import Panel from "@/components/Panel";
-import ClinicalText from "@/components/ClinicalText";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Activity, AlertTriangle, Clock, Users } from "lucide-react";
+import LiveActivityFeed from "@/components/LiveActivityFeed";
+import LiveStatusBar from "@/components/LiveStatusBar";
+import LiveTriageQueue from "@/components/LiveTriageQueue";
+import PremiumMetricCard from "@/components/PremiumMetricCard";
 import UrgencyBadge from "@/components/UrgencyBadge";
-import { fetchDailyBrief, PriorityCase } from "@/lib/api";
+import { useLiveData } from "@/hooks/useLiveData";
 
-const EVALUATOR_STEPS = [
-  { href: "/intake/", label: "Patient Intake", desc: "Load a demo case or submit a new presentation" },
-  { href: "/notes/", label: "Clinical Notes", desc: "Review triage-sorted assessments" },
-  { href: "/reports/", label: "Reports", desc: "Attending reports and patient education" },
-  { href: "/assistant/", label: "Clinical Assistant", desc: "Case-specific follow-up Q&A" },
+const QUICK_ACTIONS = [
+  { href: "/live/", label: "Live Triage Board", desc: "Real-time emergency lanes" },
+  { href: "/intake/", label: "New Intake", desc: "Submit or load demo case" },
+  { href: "/assistant/", label: "Clinical Assistant", desc: "Live case consultation" },
 ];
 
 export default function DashboardPage() {
-  const [brief, setBrief] = useState({
-    total: 0,
-    red: 0,
-    yellow: 0,
-    green: 0,
-    narrative: "",
-    priority_cases: [] as PriorityCase[],
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { brief, patients, activity, lastSync, connected, loading, refresh } = useLiveData(5000);
 
-  useEffect(() => {
-    fetchDailyBrief()
-      .then(setBrief)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const chartData = [
+    { name: "Critical", value: brief?.red ?? 0, fill: "#ef4444" },
+    { name: "Urgent", value: brief?.yellow ?? 0, fill: "#f59e0b" },
+    { name: "Routine", value: brief?.green ?? 0, fill: "#22c55e" },
+  ];
 
   return (
     <div className="animate-fade-up space-y-6">
-      {error && (
-        <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          {error}
-        </div>
-      )}
+      <LiveStatusBar connected={connected} lastSync={lastSync} onRefresh={refresh} />
 
-      <div className="glass p-6">
-        <h3 className="text-lg font-semibold text-white">Clinician & Stakeholder Evaluation Guide</h3>
-        <p className="mt-2 text-sm text-[#6b8cb8]">
-          Recommended review path for ophthalmology decision-support evaluation:
-        </p>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          {EVALUATOR_STEPS.map((step, i) => (
-            <Link
-              key={step.href}
-              href={step.href}
-              className="rounded-lg border border-border bg-canvas/50 p-4 transition hover:border-accent/40"
-            >
-              <p className="text-xs font-semibold uppercase tracking-wide text-live">
-                Step {i + 1}
-              </p>
-              <p className="mt-1 font-medium text-white">{step.label}</p>
-              <p className="mt-1 text-xs text-slate-400">{step.desc}</p>
-            </Link>
-          ))}
-        </div>
+      <div className="grid grid-cols-4 gap-4">
+        <PremiumMetricCard label="Active Caseload" value={brief?.total ?? 0} icon={Users} accent="#3b82f6" loading={loading} />
+        <PremiumMetricCard label="Critical" value={brief?.red ?? 0} icon={AlertTriangle} accent="#ef4444" loading={loading} pulse={(brief?.red ?? 0) > 0} />
+        <PremiumMetricCard label="Urgent" value={brief?.yellow ?? 0} icon={Clock} accent="#f59e0b" loading={loading} />
+        <PremiumMetricCard label="Routine" value={brief?.green ?? 0} icon={Activity} accent="#22c55e" loading={loading} />
       </div>
 
-      {!loading && brief.priority_cases.length > 0 && (
+      <div className="grid grid-cols-3 gap-4">
+        {QUICK_ACTIONS.map((a) => (
+          <Link key={a.href} href={a.href} className="glass-hover group p-5">
+            <p className="font-semibold text-white group-hover:text-accent-glow">{a.label}</p>
+            <p className="mt-1 text-xs text-slate-400">{a.desc}</p>
+          </Link>
+        ))}
+      </div>
+
+      <div>
+        <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-white">
+          <span className="h-2 w-2 rounded-full bg-live live-pulse" />
+          Live Triage Queue
+        </h2>
+        <LiveTriageQueue patients={patients} />
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
         <div className="glass p-6">
-          <h3 className="text-lg font-medium text-white">Priority Cases Requiring Review</h3>
+          <h3 className="mb-4 font-semibold text-white">Caseload Distribution</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
+                <YAxis stroke="#64748b" allowDecimals={false} />
+                <Tooltip contentStyle={{ background: "#0c1422", border: "1px solid #1a2d4a", borderRadius: 12 }} />
+                <Bar dataKey="value" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <LiveActivityFeed activity={activity} />
+      </div>
+
+      {brief?.priority_cases && brief.priority_cases.length > 0 && (
+        <div className="glass p-6">
+          <h3 className="font-semibold text-white">Priority Cases — Action Required</h3>
           <div className="mt-4 space-y-2">
             {brief.priority_cases.slice(0, 5).map((p) => (
               <Link
                 key={p.id}
                 href={`/reports/?id=${p.id}`}
-                className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition hover:border-accent/30"
+                className="live-queue-item"
               >
                 <div>
-                  <p className="font-medium text-white">
-                    {p.name} · {p.age}y
-                  </p>
+                  <p className="font-medium text-white">{p.name} · {p.age}y</p>
                   <p className="text-xs text-slate-400">{p.symptoms}</p>
                 </div>
                 <UrgencyBadge urgency={p.urgency} />
@@ -85,22 +90,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          ["Active Caseload", brief.total],
-          ["Critical", brief.red],
-          ["Urgent", brief.yellow],
-          ["Routine", brief.green],
-        ].map(([label, value]) => (
-          <div key={label as string} className="glass p-5">
-            <p className="text-xs uppercase text-slate-500">{label}</p>
-            <p className="mt-2 text-3xl font-bold text-white">
-              {loading ? "—" : (value as number)}
-            </p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

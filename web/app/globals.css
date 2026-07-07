@@ -4,40 +4,71 @@
 
 :root {
   color-scheme: dark;
+  --gradient-start: #050810;
+  --gradient-mid: #0a1628;
+  --gradient-end: #061018;
 }
 
 body {
   @apply min-h-screen text-slate-100 antialiased;
-  background: linear-gradient(135deg, #070b12 0%, #0d1520 50%, #0a1118 100%);
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-family: "Inter", "IBM Plex Sans", system-ui, sans-serif;
+  background: var(--gradient-start);
+}
+
+.app-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(59, 130, 246, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(16, 185, 129, 0.08), transparent),
+    radial-gradient(ellipse 50% 30% at 50% 100%, rgba(59, 130, 246, 0.06), transparent),
+    linear-gradient(160deg, var(--gradient-start) 0%, var(--gradient-mid) 45%, var(--gradient-end) 100%);
+}
+
+.app-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
 }
 
 .glass {
-  @apply rounded-xl border border-border bg-panel;
+  @apply rounded-2xl border border-border/80 bg-panel/70 shadow-card backdrop-blur-xl;
+}
+
+.glass-hover {
+  @apply glass transition-all duration-300 hover:border-accent/30 hover:shadow-glow;
 }
 
 .panel {
-  @apply mb-4 rounded-xl border border-border bg-panel p-5;
+  @apply mb-4 rounded-xl border border-border/60 bg-panel/90 p-5;
 }
 
 .panel-title {
-  @apply mb-3 text-[0.72rem] font-semibold uppercase tracking-widest text-[#6b8cb8];
+  @apply mb-3 text-[0.7rem] font-bold uppercase tracking-[0.15em] text-accent-glow/80;
 }
 
 .urgency-red {
-  @apply rounded-r-lg border-l-4 border-red-500 bg-red-500/10 px-4 py-3 text-red-300;
+  @apply rounded-xl border border-critical/30 bg-gradient-to-r from-critical/20 to-critical/5 px-4 py-3 text-red-200 shadow-[inset_0_0_20px_rgba(239,68,68,0.08)];
 }
 
 .urgency-yellow {
-  @apply rounded-r-lg border-l-4 border-amber-500 bg-amber-500/10 px-4 py-3 text-amber-300;
+  @apply rounded-xl border border-urgent/30 bg-gradient-to-r from-urgent/20 to-urgent/5 px-4 py-3 text-amber-200;
 }
 
 .urgency-green {
-  @apply rounded-r-lg border-l-4 border-emerald-500 bg-emerald-500/10 px-4 py-3 text-emerald-300;
+  @apply rounded-xl border border-routine/30 bg-gradient-to-r from-routine/20 to-routine/5 px-4 py-3 text-emerald-200;
 }
 
 .brief-card {
-  @apply rounded-2xl border border-[#1e4a6f] bg-gradient-to-br from-[#0f2438] to-[#132a42] p-6 text-[#dce8f5];
+  @apply rounded-2xl border border-accent/20 bg-gradient-to-br from-[#0c1a2e] via-[#0f2238] to-[#0a1628] p-6 shadow-glow;
 }
 
 .live-pulse {
@@ -45,25 +76,25 @@ body {
 }
 
 @keyframes pulse-live {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  50% { opacity: 0.85; transform: scale(1.1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-up {
-  animation: fade-up 0.4s ease-out forwards;
+  animation: fade-up 0.5s ease-out forwards;
 }
 
 .chat-user {
-  @apply ml-auto max-w-[85%] rounded-2xl bg-gradient-to-r from-[#1e4a6f] to-accent px-4 py-3 text-sm text-white;
+  @apply ml-auto max-w-[85%] rounded-2xl bg-gradient-to-br from-accent to-blue-700 px-4 py-3 text-sm text-white shadow-lg;
 }
 
 .chat-assistant {
-  @apply max-w-[85%] rounded-2xl border border-border bg-panel px-4 py-3 text-sm text-slate-300;
+  @apply max-w-[85%] rounded-2xl border border-border/60 bg-panel/90 px-4 py-3 text-sm text-slate-300 backdrop-blur-sm;
 }
 
 .clinical-text {
@@ -71,9 +102,37 @@ body {
 }
 
 .field-input {
-  @apply w-full rounded-lg border border-border bg-canvas px-4 py-2.5 text-white outline-none focus:border-accent;
+  @apply w-full rounded-xl border border-border/80 bg-canvas/80 px-4 py-2.5 text-white outline-none transition-all placeholder:text-slate-500 focus:border-accent focus:ring-2 focus:ring-accent/20;
 }
 
 .btn-primary {
-  @apply rounded-lg bg-gradient-to-r from-[#1e4a6f] to-accent py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50;
+  @apply rounded-xl bg-gradient-to-r from-accent to-blue-600 py-3 font-semibold text-white shadow-lg shadow-accent/25 transition-all hover:shadow-accent/40 hover:brightness-110 disabled:opacity-50;
+}
+
+.metric-card {
+  @apply relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-panel to-panel-hover p-5 shadow-card transition-all hover:border-accent/25 hover:shadow-glow;
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-line, #3b82f6), transparent);
+}
+
+.live-queue-item {
+  @apply flex items-center gap-4 rounded-xl border border-border/50 bg-panel/60 px-4 py-3 transition-all hover:border-accent/30 hover:bg-panel-hover;
+}
+
+.typing-cursor::after {
+  content: "▋";
+  animation: blink 1s step-end infinite;
+  color: #10b981;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
 }

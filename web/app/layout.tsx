@@ -4,8 +4,8 @@ import DemoBanner from "@/components/DemoBanner";
 import "./globals.css";
 
 export const metadata = {
-  title: "VisionFlow Clinical Copilot",
-  description: "Real-time ophthalmology clinical intelligence platform",
+  title: "VisionFlow Eye Hospital CDS",
+  description: "Real-time ophthalmology clinical intelligence command center",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -13,13 +13,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>
       <body>
+        <div className="app-bg" />
+        <div className="app-grid" />
         <Sidebar />
-        <main className="ml-64 min-h-screen p-8">
+        <main className="relative z-10 ml-[272px] min-h-screen p-6 md:p-8">
           <ClinicalHeader />
           <DemoBanner />
           {children}

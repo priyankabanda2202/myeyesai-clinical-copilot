@@ -129,6 +129,12 @@ export async function submitAttestation(
   return res.json();
 }
 
+export function wsUrl(patientId: number) {
+  const base = apiBase();
+  const wsBase = base.replace(/^http/, "ws");
+  return `${wsBase}/ws/copilot/${patientId}`;
+}
+
 export async function askCopilot(patientId: number, question: string) {
   const res = await apiFetch("/api/copilot", {
     method: "POST",

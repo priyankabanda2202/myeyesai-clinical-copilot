@@ -63,7 +63,7 @@ def urgency_counts(patients):
 
 
 st.set_page_config(
-    page_title="MyEyesAI Clinical Copilot",
+    page_title="VisionFlow Clinical Copilot",
     page_icon="👁️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -86,8 +86,19 @@ with st.sidebar:
         label_visibility="collapsed",
     )
     st.markdown("---")
-    st.caption("Engine · Ollama")
-    st.caption(f"Model · {os.getenv('OLLAMA_MODEL', 'llama3:latest')}")
+    if os.getenv("GROQ_API_KEY"):
+        provider = "Groq"
+    elif os.getenv("OPENAI_API_KEY"):
+        provider = "OpenAI"
+    else:
+        provider = "Ollama"
+    st.caption(f"Engine · {provider}")
+    model = (
+        os.getenv("GROQ_MODEL")
+        or os.getenv("OPENAI_MODEL")
+        or os.getenv("OLLAMA_MODEL", "llama3:latest")
+    )
+    st.caption(f"Model · {model}")
 
 render_header()
 
@@ -131,10 +142,11 @@ elif page == "Patient Intake":
                 try:
                     result = run_clinical_workflow(name, age, symptoms)
                 except Exception as exc:
-                    status.update(label="Ollama unavailable", state="error")
+                    status.update(label="LLM unavailable", state="error")
                     st.error(
-                        f"Ollama error: {exc}\n\n"
-                        "Start Ollama and run: `ollama pull llama3.2`"
+                        f"LLM error: {exc}\n\n"
+                        "Local: start Ollama (`ollama serve`)\n"
+                        "Cloud: set GROQ_API_KEY on Render"
                     )
                     st.stop()
                 st.write("Urgency stratification")
@@ -213,7 +225,7 @@ elif page == "Daily Brief":
     st.markdown(
         f"""
 <div class="brief-card">
-  <strong>Morning Brief — Dr Carl</strong><br><br>
+  <strong>Morning Brief — Clinical Director</strong><br><br>
   Critical cases requiring immediate action: <strong>{red}</strong><br>
   Urgent reviews scheduled: <strong>{yellow}</strong><br>
   Routine follow-ups: <strong>{green}</strong>
@@ -253,14 +265,14 @@ elif page == "Clinical Assistant":
                     st.markdown(prompt)
 
                 with st.chat_message("assistant", avatar="🩺"):
-                    with st.spinner("Ollama reasoning..."):
+                    with st.spinner("Clinical reasoning..."):
                         time.sleep(0.2)
                         try:
                             response = answer(prompt, patient)
                         except Exception as exc:
                             response = (
-                                f"**Ollama unavailable:** {exc}\n\n"
-                                "Ensure Ollama is running: `ollama serve` then `ollama pull llama3.2`"
+                                f"**LLM unavailable:** {exc}\n\n"
+                                "Local: `ollama serve` · Cloud: set `GROQ_API_KEY`"
                             )
                     st.markdown(response)
                 st.session_state.chat.append({"role": "assistant", "content": response})

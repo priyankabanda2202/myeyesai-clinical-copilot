@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VisionFlow - System Flow Diagram</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Inter, Arial, sans-serif; background: #060b14; color: #e2e8f0; min-height: 100vh; }
+    .toolbar {
+      position: sticky; top: 0; z-index: 100; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; padding: 14px 24px;
+      background: rgba(10, 15, 26, 0.95); border-bottom: 1px solid #1a2d4a; flex-wrap: wrap;
+    }
+    .toolbar h1 { font-size: 1.1rem; color: #fff; }
+    .toolbar p { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+    .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    button { display: inline-flex; align-items: center; padding: 10px 18px; border-radius: 10px;
+      font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; }
+    .btn-gold { background: linear-gradient(90deg, #d4a853, #f0c96a); color: #1a1a1a; }
+    .btn-blue { background: #1e40af; color: #fff; border: 1px solid #3b82f6; }
+    .btn-ghost { background: transparent; color: #94a3b8; border: 1px solid #1a2d4a; }
+    .wrap { max-width: 1440px; margin: 0 auto; padding: 24px; }
+    .diagram-frame {
+      background: #0a0f1a; border: 1px solid #1a2d4a; border-radius: 16px;
+      overflow: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    #flow-diagram { display: block; width: 100%; min-width: 900px; height: auto; }
+    .hint { margin-top: 16px; padding: 14px 18px; background: #0c1422; border: 1px solid #1a2d4a;
+      border-radius: 12px; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+    .hint strong { color: #d4a853; }
+    @media print { .toolbar, .hint { display: none; } .wrap { padding: 0; max-width: none; } }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div>
+      <h1>VisionFlow Clinical Copilot - System Flow Diagram</h1>
+      <p>End-to-end architecture | All agents | Inputs and outputs | 15 screens</p>
+    </div>
+    <div class="btns">
+      <button class="btn btn-gold" onclick="downloadSVG()">Download SVG</button>
+      <button class="btn btn-blue" onclick="downloadPNG()">Download PNG</button>
+      <button class="btn btn-ghost" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="diagram-frame">
+<svg id="flow-diagram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 3200" font-family="Segoe UI, Inter, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1a"/>
+      <stop offset="100%" stop-color="#060b14"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4a853"/>
+      <stop offset="100%" stop-color="#f0c96a"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowGold" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#d4a853"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="3200" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="700" y="55" text-anchor="middle" fill="#ffffff" font-size="32" font-weight="700">VisionFlow Clinical Copilot</text>
+  <text x="700" y="88" text-anchor="middle" fill="#94a3b8" font-size="16">End-to-End System Flow - Inputs &amp; Outputs</text>
+  <rect x="500" y="105" width="400" height="3" fill="url(#gold)" rx="2"/>
+
+  <!-- Legend -->
+  <g transform="translate(80, 120)">
+    <rect x="0" y="0" width="1240" height="72" rx="12" fill="#0c1422" stroke="#1a2d4a" stroke-width="1.5"/>
+    <text x="24" y="28" fill="#94a3b8" font-size="13" font-weight="600">LEGEND</text>
+    <rect x="120" y="14" width="18" height="18" rx="4" fill="#3b82f6"/>
+    <text x="148" y="28" fill="#cbd5e1" font-size="13">Frontend / UI</text>
+    <rect x="290" y="14" width="18" height="18" rx="4" fill="#8b5cf6"/>
+    <text x="318" y="28" fill="#cbd5e1" font-size="13">FastAPI Service</text>
+    <rect x="470" y="14" width="18" height="18" rx="4" fill="#d4a853"/>
+    <text x="498" y="28" fill="#cbd5e1" font-size="13">LangGraph Agent (LLM)</text>
+    <rect x="680" y="14" width="18" height="18" rx="4" fill="#10b981"/>
+    <text x="708" y="28" fill="#cbd5e1" font-size="13">LangGraph Agent (No LLM)</text>
+    <rect x="920" y="14" width="18" height="18" rx="4" fill="#ef4444"/>
+    <text x="948" y="28" fill="#cbd5e1" font-size="13">Database</text>
+    <rect x="1060" y="14" width="18" height="18" rx="4" fill="#06b6d4"/>
+    <text x="1088" y="28" fill="#cbd5e1" font-size="13">Supporting Service</text>
+    <text x="24" y="56" fill="#64748b" font-size="12">Live: https://visionflow-clinical-copilot.onrender.com  |  API v2.1.0  |  Stack: LangGraph  |  FastAPI  |  Next.js 15  |  Groq/Ollama</text>
+  </g>
+
+  <!-- SECTION 1: USER INTAKE -->
+  <text x="80" y="230" fill="#d4a853" font-size="14" font-weight="700" letter-spacing="2">PHASE 1 - PATIENT INTAKE (USER ACTION)</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="250" width="320" height="130" rx="14" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="240" y="282" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">Staff - Patient Intake UI</text>
+    <text x="240" y="305" text-anchor="middle" fill="#64748b" font-size="12">Route: /intake/</text>
+    <line x1="100" y1="318" x2="380" y2="318" stroke="#1a2d4a"/>
+    <text x="100" y="338" fill="#94a3b8" font-size="11">IN: name, age, symptoms, laterality,</text>
+    <text x="100" y="354" fill="#94a3b8" font-size="11">visual acuity, IOP, duration, comorbidities</text>
+    <text x="100" y="372" fill="#10b981" font-size="11" font-weight="600">ACTION: Submit form  |  POST /api/intake</text>
+  </g>
+
+  <line x1="400" y1="315" x2="480" y2="315" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="480" y="250" width="320" height="130" rx="14" fill="#0f172a" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="640" y="282" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">FastAPI - Intake Endpoint</text>
+    <text x="640" y="305" text-anchor="middle" fill="#64748b" font-size="12">POST /api/intake</text>
+    <line x1="500" y1="318" x2="780" y2="318" stroke="#1a2d4a"/>
+    <text x="500" y="338" fill="#94a3b8" font-size="11">IN: IntakeRequest JSON (8 fields)</text>
+    <text x="500" y="354" fill="#94a3b8" font-size="11">TRIGGERS: run_clinical_workflow()</text>
+    <text x="500" y="372" fill="#10b981" font-size="11" font-weight="600">OUT: IntakeResponse JSON (full pipeline result)</text>
+  </g>
+
+  <!-- SECTION 2: LANGGRAPH -->
+  <text x="80" y="430" fill="#d4a853" font-size="14" font-weight="700" letter-spacing="2">PHASE 2 - LANGGRAPH MULTI-AGENT PIPELINE (SEQUENTIAL)</text>
+
+  <!-- Agent 1 -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="455" width="1240" height="88" rx="12" fill="#0c1422" stroke="#10b981" stroke-width="2"/>
+    <circle cx="120" cy="499" r="22" fill="#10b981"/>
+    <text x="120" y="505" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">1</text>
+    <text x="160" y="485" fill="#ffffff" font-size="15" font-weight="700">Intake Agent</text>
+    <text x="160" y="505" fill="#64748b" font-size="12">No LLM - string normalization</text>
+    <text x="160" y="528" fill="#94a3b8" font-size="11">IN: name, age, symptoms, laterality, VA, IOP, duration, comorbidities</text>
+    <text x="900" y="528" fill="#10b981" font-size="11" font-weight="600">OUT  |  summary (structured presentation text)</text>
+  </g>
+  <line x1="700" y1="543" x2="700" y2="568" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Agent 2 -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="570" width="1240" height="88" rx="12" fill="#0c1422" stroke="#d4a853" stroke-width="2"/>
+    <circle cx="120" cy="614" r="22" fill="#d4a853"/>
+    <text x="120" y="620" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">2</text>
+    <text x="160" y="600" fill="#ffffff" font-size="15" font-weight="700">Clinical Reasoning Agent</text>
+    <text x="160" y="620" fill="#64748b" font-size="12">LLM (Groq / OpenAI / Ollama) - Senior ophthalmology assessment</text>
+    <text x="160" y="643" fill="#94a3b8" font-size="11">IN  |  summary</text>
+    <text x="900" y="643" fill="#d4a853" font-size="11" font-weight="600">OUT  |  analysis (diagnosis, differential, workup, confidence %, ICD-10, guidelines, referral)</text>
+  </g>
+  <line x1="700" y1="658" x2="700" y2="683" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Agent 3 -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="685" width="1240" height="88" rx="12" fill="#0c1422" stroke="#d4a853" stroke-width="2"/>
+    <circle cx="120" cy="729" r="22" fill="#d4a853"/>
+    <text x="120" y="735" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="700">3</text>
+    <text x="160" y="715" fill="#ffffff" font-size="15" font-weight="700">Urgency Agent</text>
+    <text x="160" y="735" fill="#64748b" font-size="12">LLM + rule-based fallback - Triage nurse classification</text>
+    <text x="160" y="758" fill="#94a3b8" font-size="11">IN  |  symptoms + analysis (600 chars)</text>
+    <text x="900" y="758" fill="#d4a853" font-size="11" font-weight="600">OUT  |  urgency: RED (same-day) | YELLOW (24-48h) | GREEN (routine)</text>
+  </g>
+  <line x1="700" y1="773" x2="700" y2="798" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Agent 4 -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="800" width="1240" height="88" rx="12" fill="#0c1422" stroke="#10b981" stroke-width="2"/>
+    <circle cx="120" cy="844" r="22" fill="#10b981"/>
+    <text x="120" y="850" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">4</text>
+    <text x="160" y="830" fill="#ffffff" font-size="15" font-weight="700">Report Agent</text>
+    <text x="160" y="850" fill="#64748b" font-size="12">No LLM - template assembly</text>
+    <text x="160" y="873" fill="#94a3b8" font-size="11">IN  |  analysis + urgency</text>
+    <text x="900" y="873" fill="#10b981" font-size="11" font-weight="600">OUT  |  doctor_report (attending clinical note)</text>
+  </g>
+  <line x1="700" y1="888" x2="700" y2="913" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Agent 5 -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="915" width="1240" height="88" rx="12" fill="#0c1422" stroke="#10b981" stroke-width="2"/>
+    <circle cx="120" cy="959" r="22" fill="#10b981"/>
+    <text x="120" y="965" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">5</text>
+    <text x="160" y="945" fill="#ffffff" font-size="15" font-weight="700">Patient Education Agent</text>
+    <text x="160" y="965" fill="#64748b" font-size="12">No LLM - template with urgency-specific next steps</text>
+    <text x="160" y="988" fill="#94a3b8" font-size="11">IN  |  symptoms + analysis + urgency</text>
+    <text x="900" y="988" fill="#10b981" font-size="11" font-weight="600">OUT  |  patient_education (plain-language handout)</text>
+  </g>
+  <line x1="700" y1="1003" x2="700" y2="1028" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Agent 6 -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="1030" width="1240" height="88" rx="12" fill="#0c1422" stroke="#10b981" stroke-width="2"/>
+    <circle cx="120" cy="1074" r="22" fill="#10b981"/>
+    <text x="120" y="1080" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">6</text>
+    <text x="160" y="1060" fill="#ffffff" font-size="15" font-weight="700">Daily Brief Node</text>
+    <text x="160" y="1080" fill="#64748b" font-size="12">No LLM - per-case workflow stub</text>
+    <text x="160" y="1103" fill="#94a3b8" font-size="11">IN  |  name + urgency</text>
+    <text x="900" y="1103" fill="#10b981" font-size="11" font-weight="600">OUT  |  brief (one-line processing confirmation)  |  END</text>
+  </g>
+
+  <!-- SECTION 3: POST PROCESSING -->
+  <text x="80" y="1165" fill="#d4a853" font-size="14" font-weight="700" letter-spacing="2">PHASE 3 - POST-PROCESSING &amp; PERSISTENCE</text>
+
+  <line x1="700" y1="1118" x2="700" y2="1185" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Post processing boxes -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="1185" width="290" height="110" rx="12" fill="#0c1422" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="225" y="1215" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">extract_icd10()</text>
+    <text x="225" y="1238" text-anchor="middle" fill="#64748b" font-size="11">Regex scan of analysis text</text>
+    <text x="100" y="1260" fill="#94a3b8" font-size="11">IN: analysis / doctor_report</text>
+    <text x="100" y="1278" fill="#06b6d4" font-size="11" font-weight="600">OUT: icd10_codes (e.g. H34.1)</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="390" y="1185" width="290" height="110" rx="12" fill="#0c1422" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="535" y="1215" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">extract_confidence()</text>
+    <text x="535" y="1238" text-anchor="middle" fill="#64748b" font-size="11">Regex on percentage in analysis</text>
+    <text x="410" y="1260" fill="#94a3b8" font-size="11">IN: analysis text</text>
+    <text x="410" y="1278" fill="#06b6d4" font-size="11" font-weight="600">OUT: confidence_pct (0-100)</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="700" y="1185" width="290" height="110" rx="12" fill="#0c1422" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="845" y="1215" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">referral_for_urgency()</text>
+    <text x="845" y="1238" text-anchor="middle" fill="#64748b" font-size="11">Maps urgency to care pathway</text>
+    <text x="720" y="1260" fill="#94a3b8" font-size="11">IN: RED / YELLOW / GREEN</text>
+    <text x="720" y="1278" fill="#06b6d4" font-size="11" font-weight="600">OUT: referral_action text</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1010" y="1185" width="310" height="110" rx="12" fill="#0c1422" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="1165" y="1215" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">Operations Agent (case)</text>
+    <text x="1165" y="1238" text-anchor="middle" fill="#64748b" font-size="11">Time saved, revenue, scheduling</text>
+    <text x="1030" y="1260" fill="#94a3b8" font-size="11">IN: name, urgency, icd10, referral</text>
+    <text x="1030" y="1278" fill="#06b6d4" font-size="11" font-weight="600">OUT: AutomationSummary (38 min saved)</text>
+  </g>
+
+  <line x1="700" y1="1295" x2="700" y2="1330" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Database -->
+  <g filter="url(#shadow)">
+    <rect x="200" y="1330" width="1000" height="130" rx="14" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+    <text x="700" y="1365" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">SQLite Database - create_patient()</text>
+    <text x="700" y="1388" text-anchor="middle" fill="#64748b" font-size="12">IN: all clinical fields + vitals + reports</text>
+    <line x1="230" y1="1400" x2="1170" y2="1400" stroke="#1a2d4a"/>
+    <rect x="230" y="1410" width="280" height="38" rx="8" fill="#1a0a0a" stroke="#ef4444" stroke-width="1"/>
+    <text x="370" y="1434" text-anchor="middle" fill="#fca5a5" font-size="12">patients table (review_status=pending)</text>
+    <rect x="530" y="1410" width="280" height="38" rx="8" fill="#1a0a0a" stroke="#ef4444" stroke-width="1"/>
+    <text x="670" y="1434" text-anchor="middle" fill="#fca5a5" font-size="12">reports table (doctor + patient text)</text>
+    <rect x="830" y="1410" width="310" height="38" rx="8" fill="#1a0a0a" stroke="#ef4444" stroke-width="1"/>
+    <text x="985" y="1434" text-anchor="middle" fill="#fca5a5" font-size="12">audit_logs  |  intake_completed event</text>
+  </g>
+
+  <line x1="700" y1="1460" x2="700" y2="1495" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Response -->
+  <g filter="url(#shadow)">
+    <rect x="200" y="1495" width="1000" height="90" rx="14" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="700" y="1528" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">IntakeResponse  |  Browser UI</text>
+    <text x="700" y="1552" text-anchor="middle" fill="#94a3b8" font-size="12">OUT: summary, analysis, urgency, doctor_report, patient_education, icd10, confidence, referral,</text>
+    <text x="700" y="1570" text-anchor="middle" fill="#10b981" font-size="12" font-weight="600">pipeline_trace (6 steps), automation metrics, saved patient record with ID</text>
+  </g>
+
+  <!-- SECTION 4: DOWNSTREAM -->
+  <text x="80" y="1635" fill="#d4a853" font-size="14" font-weight="700" letter-spacing="2">PHASE 4 - DOWNSTREAM WORKFLOWS (AFTER INTAKE)</text>
+
+  <!-- Three columns -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="1660" width="380" height="200" rx="14" fill="#0c1422" stroke="#3b82f6" stroke-width="2"/>
+    <text x="270" y="1695" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">Physician Review</text>
+    <text x="270" y="1718" text-anchor="middle" fill="#64748b" font-size="12">Route: /review/  |  /reports/</text>
+    <line x1="100" y1="1730" x2="440" y2="1730" stroke="#1a2d4a"/>
+    <text x="100" y="1752" fill="#94a3b8" font-size="11">IN: patient_id, status, note</text>
+    <text x="100" y="1770" fill="#94a3b8" font-size="11">POST /api/patients/{id}/attestation</text>
+    <text x="100" y="1792" fill="#10b981" font-size="11" font-weight="600">OUT: review_status updated</text>
+    <text x="100" y="1810" fill="#10b981" font-size="11">audit: physician_attestation</text>
+    <text x="100" y="1838" fill="#64748b" font-size="11">Actions: Accept  |  Modify  |  Reject</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="510" y="1660" width="380" height="200" rx="14" fill="#0c1422" stroke="#3b82f6" stroke-width="2"/>
+    <text x="700" y="1695" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">Live Operations Dashboard</text>
+    <text x="700" y="1718" text-anchor="middle" fill="#64748b" font-size="12">Routes: /  |  /live/  |  /brief/</text>
+    <line x1="530" y1="1730" x2="870" y2="1730" stroke="#1a2d4a"/>
+    <text x="530" y="1752" fill="#94a3b8" font-size="11">Polls every 3-5 seconds:</text>
+    <text x="530" y="1770" fill="#94a3b8" font-size="11">GET /api/daily-brief  |  counts + narrative</text>
+    <text x="530" y="1788" fill="#94a3b8" font-size="11">GET /api/patients  |  triage queue</text>
+    <text x="530" y="1806" fill="#94a3b8" font-size="11">GET /api/audit  |  activity feed</text>
+    <text x="530" y="1828" fill="#10b981" font-size="11" font-weight="600">OUT: Live RED/YELLOW/GREEN lanes</text>
+    <text x="530" y="1846" fill="#10b981" font-size="11">+ priority cases + metrics cards</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="940" y="1660" width="380" height="200" rx="14" fill="#0c1422" stroke="#3b82f6" stroke-width="2"/>
+    <text x="1130" y="1695" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">Scheduling Desk</text>
+    <text x="1130" y="1718" text-anchor="middle" fill="#64748b" font-size="12">Route: /scheduling/</text>
+    <line x1="960" y1="1730" x2="1300" y2="1730" stroke="#1a2d4a"/>
+    <text x="960" y="1752" fill="#94a3b8" font-size="11">GET /api/scheduling</text>
+    <text x="960" y="1774" fill="#ef4444" font-size="11">RED  |  same-day slot (2 hrs)</text>
+    <text x="960" y="1792" fill="#f59e0b" font-size="11">YELLOW  |  priority 24-48 hrs</text>
+    <text x="960" y="1810" fill="#22c55e" font-size="11">GREEN  |  routine within 2 weeks</text>
+    <text x="960" y="1838" fill="#10b981" font-size="11" font-weight="600">OUT: 3-lane kanban + slot text</text>
+  </g>
+
+  <!-- Row 2 downstream -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="1890" width="380" height="180" rx="14" fill="#0c1422" stroke="#d4a853" stroke-width="2"/>
+    <text x="270" y="1925" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">Clinical Assistant (Copilot)</text>
+    <text x="270" y="1948" text-anchor="middle" fill="#64748b" font-size="12">Route: /assistant/</text>
+    <line x1="100" y1="1960" x2="440" y2="1960" stroke="#1a2d4a"/>
+    <text x="100" y="1982" fill="#94a3b8" font-size="11">IN: patient_id + question</text>
+    <text x="100" y="2000" fill="#94a3b8" font-size="11">POST /api/copilot (LLM)</text>
+    <text x="100" y="2022" fill="#10b981" font-size="11" font-weight="600">OUT: clinical answer text</text>
+    <text x="100" y="2040" fill="#10b981" font-size="11">audit: copilot_query</text>
+    <text x="100" y="2058" fill="#64748b" font-size="11">Context: full patient record from DB</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="510" y="1890" width="380" height="180" rx="14" fill="#0c1422" stroke="#06b6d4" stroke-width="2"/>
+    <text x="700" y="1925" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">Operations / ROI Hub</text>
+    <text x="700" y="1948" text-anchor="middle" fill="#64748b" font-size="12">Route: /operations/</text>
+    <line x1="530" y1="1960" x2="870" y2="1960" stroke="#1a2d4a"/>
+    <text x="530" y="1982" fill="#94a3b8" font-size="11">IN: all patients from DB</text>
+    <text x="530" y="2000" fill="#94a3b8" font-size="11">GET /api/operations (8s poll)</text>
+    <text x="530" y="2022" fill="#10b981" font-size="11" font-weight="600">OUT: hours saved, revenue pipeline,</text>
+    <text x="530" y="2040" fill="#10b981" font-size="11">automation rate, pending reviews</text>
+    <text x="530" y="2058" fill="#64748b" font-size="11">Baseline: 45 min  |  7 min per case</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="940" y="1890" width="380" height="180" rx="14" fill="#0c1422" stroke="#06b6d4" stroke-width="2"/>
+    <text x="1130" y="1925" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">Report Export &amp; Audit</text>
+    <text x="1130" y="1948" text-anchor="middle" fill="#64748b" font-size="12">Routes: /reports/  |  /audit/</text>
+    <line x1="960" y1="1960" x2="1300" y2="1960" stroke="#1a2d4a"/>
+    <text x="960" y="1982" fill="#94a3b8" font-size="11">DownloadReport: client-side HTML</text>
+    <text x="960" y="2000" fill="#94a3b8" font-size="11">Hospital letterhead + clinical data</text>
+    <text x="960" y="2022" fill="#10b981" font-size="11" font-weight="600">OUT: .html file / print to PDF</text>
+    <text x="960" y="2044" fill="#94a3b8" font-size="11">GET /api/audit  |  CSV export</text>
+    <text x="960" y="2062" fill="#64748b" font-size="11">Events: intake  |  attestation  |  copilot</text>
+  </g>
+
+  <!-- SECTION 5: ARCHITECTURE -->
+  <text x="80" y="2120" fill="#d4a853" font-size="14" font-weight="700" letter-spacing="2">PHASE 5 - DEPLOYMENT ARCHITECTURE</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="2145" width="1240" height="160" rx="14" fill="#0c1422" stroke="#1a2d4a" stroke-width="1.5"/>
+    <text x="700" y="2180" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">Render Cloud - Single Service (Monolith)</text>
+
+    <!-- Architecture boxes -->
+    <rect x="120" y="2200" width="200" height="80" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="220" y="2230" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="700">Browser</text>
+    <text x="220" y="2250" text-anchor="middle" fill="#64748b" font-size="11">Next.js 15 UI</text>
+    <text x="220" y="2268" text-anchor="middle" fill="#64748b" font-size="11">15 screens</text>
+
+    <line x1="320" y1="2240" x2="380" y2="2240" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="380" y="2200" width="240" height="80" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="500" y="2230" text-anchor="middle" fill="#8b5cf6" font-size="13" font-weight="700">FastAPI v2.1.0</text>
+    <text x="500" y="2250" text-anchor="middle" fill="#64748b" font-size="11">13 REST + 1 WebSocket</text>
+    <text x="500" y="2268" text-anchor="middle" fill="#64748b" font-size="11">Serves web/out static</text>
+
+    <line x1="620" y1="2240" x2="680" y2="2240" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="680" y="2200" width="240" height="80" rx="10" fill="#0f172a" stroke="#d4a853" stroke-width="1.5"/>
+    <text x="800" y="2230" text-anchor="middle" fill="#d4a853" font-size="13" font-weight="700">LangGraph Pipeline</text>
+    <text x="800" y="2250" text-anchor="middle" fill="#64748b" font-size="11">6 sequential agents</text>
+    <text x="800" y="2268" text-anchor="middle" fill="#64748b" font-size="11">StateGraph orchestration</text>
+
+    <line x1="920" y1="2240" x2="980" y2="2240" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="980" y="2200" width="160" height="80" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+    <text x="1060" y="2230" text-anchor="middle" fill="#10b981" font-size="13" font-weight="700">Groq LLM</text>
+    <text x="1060" y="2250" text-anchor="middle" fill="#64748b" font-size="11">llama-3.1-8b</text>
+    <text x="1060" y="2268" text-anchor="middle" fill="#64748b" font-size="11">(cloud inference)</text>
+
+    <rect x="1160" y="2200" width="140" height="80" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="1230" y="2230" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="700">SQLite</text>
+    <text x="1230" y="2250" text-anchor="middle" fill="#64748b" font-size="11">patients</text>
+    <text x="1230" y="2268" text-anchor="middle" fill="#64748b" font-size="11">reports  |  audit</text>
+  </g>
+
+  <!-- Urgency color key -->
+  <text x="80" y="2355" fill="#d4a853" font-size="14" font-weight="700" letter-spacing="2">TRIAGE CLASSIFICATION KEY</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="2375" width="380" height="80" rx="12" fill="#1a0a0a" stroke="#ef4444" stroke-width="2"/>
+    <text x="270" y="2408" text-anchor="middle" fill="#ef4444" font-size="18" font-weight="700">RED - Emergency</text>
+    <text x="270" y="2432" text-anchor="middle" fill="#94a3b8" font-size="12">Same-day  |  Sudden vision loss  |  Retinal detachment  |  AACG</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="510" y="2375" width="380" height="80" rx="12" fill="#1a1508" stroke="#f59e0b" stroke-width="2"/>
+    <text x="700" y="2408" text-anchor="middle" fill="#f59e0b" font-size="18" font-weight="700">YELLOW - Urgent</text>
+    <text x="700" y="2432" text-anchor="middle" fill="#94a3b8" font-size="12">24-48 hours  |  Painful red eye  |  High IOP  |  New floaters</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="940" y="2375" width="380" height="80" rx="12" fill="#0a1a0f" stroke="#22c55e" stroke-width="2"/>
+    <text x="1130" y="2408" text-anchor="middle" fill="#22c55e" font-size="18" font-weight="700">GREEN - Routine</text>
+    <text x="1130" y="2432" text-anchor="middle" fill="#94a3b8" font-size="12">Standard follow-up  |  Presbyopia  |  Dry eye  |  Cataract review</text>
+  </g>
+
+  <!-- All 15 screens -->
+  <text x="80" y="2505" fill="#d4a853" font-size="14" font-weight="700" letter-spacing="2">ALL 15 PLATFORM SCREENS</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="2525" width="1240" height="130" rx="14" fill="#0c1422" stroke="#1a2d4a" stroke-width="1.5"/>
+    <text x="100" y="2555" fill="#3b82f6" font-size="12" font-weight="700">CLINICAL OPS</text>
+    <text x="100" y="2578" fill="#cbd5e1" font-size="11">/ Command Center</text>
+    <text x="100" y="2596" fill="#cbd5e1" font-size="11">/live/ Live Triage Board</text>
+    <text x="100" y="2614" fill="#cbd5e1" font-size="11">/intake/ Patient Intake</text>
+    <text x="100" y="2632" fill="#cbd5e1" font-size="11">/review/ Physician Review</text>
+
+    <text x="320" y="2555" fill="#3b82f6" font-size="12" font-weight="700">WORKFLOW</text>
+    <text x="320" y="2578" fill="#cbd5e1" font-size="11">/scheduling/ Scheduling Desk</text>
+    <text x="320" y="2596" fill="#cbd5e1" font-size="11">/notes/ Clinical Notes</text>
+    <text x="320" y="2614" fill="#cbd5e1" font-size="11">/reports/ Reports &amp; Export</text>
+    <text x="320" y="2632" fill="#cbd5e1" font-size="11">/brief/ Daily Brief</text>
+
+    <text x="560" y="2555" fill="#3b82f6" font-size="12" font-weight="700">AI &amp; ANALYTICS</text>
+    <text x="560" y="2578" fill="#cbd5e1" font-size="11">/assistant/ Clinical Assistant</text>
+    <text x="560" y="2596" fill="#cbd5e1" font-size="11">/operations/ ROI &amp; Automation Hub</text>
+
+    <text x="800" y="2555" fill="#3b82f6" font-size="12" font-weight="700">GOVERNANCE</text>
+    <text x="800" y="2578" fill="#cbd5e1" font-size="11">/audit/ Audit Trail + CSV</text>
+    <text x="800" y="2596" fill="#cbd5e1" font-size="11">/compliance/ Privacy &amp; Security</text>
+
+    <text x="1040" y="2555" fill="#3b82f6" font-size="12" font-weight="700">INSTITUTION</text>
+    <text x="1040" y="2578" fill="#cbd5e1" font-size="11">/branches/ Campus Locations</text>
+    <text x="1040" y="2596" fill="#cbd5e1" font-size="11">/about/ About Us</text>
+    <text x="1040" y="2614" fill="#cbd5e1" font-size="11">/help/ Help Desk</text>
+  </g>
+
+  <!-- Footer -->
+  <rect x="80" y="2690" width="1240" height="3" fill="url(#gold)" rx="2"/>
+  <text x="700" y="2730" text-anchor="middle" fill="#64748b" font-size="13">VisionFlow Clinical Copilot  |  Built by Priyanka Banda  |  GenAI Architect</text>
+  <text x="700" y="2755" text-anchor="middle" fill="#475569" font-size="12">visionflow-clinical-copilot.onrender.com  |  github.com/priyankabanda2202/visionflow-clinical-copilot</text>
+  <text x="700" y="2780" text-anchor="middle" fill="#334155" font-size="11">Open this SVG in any browser  |  Right-click  |  Save as PNG/PDF for presentations</text>
+</svg>
+
+    </div>
+    <div class="hint">
+      <strong>How to view:</strong> Double-click this file in File Explorer. Scroll inside the diagram to see all 5 phases.
+      Use <strong>Download PNG</strong> for slides or <strong>Print / Save PDF</strong> to export.
+    </div>
+  </div>
+  <script>
+    function getSvg() { return document.getElementById("flow-diagram"); }
+    function downloadSVG() {
+      var svg = getSvg();
+      var text = new XMLSerializer().serializeToString(svg);
+      if (!text.startsWith("<?xml")) text = '<?xml version="1.0" encoding="UTF-8"?>\n' + text;
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([text], { type: "image/svg+xml" }));
+      a.download = "visionflow-flow-diagram.svg";
+      a.click();
+    }
+    function downloadPNG() {
+      var svg = getSvg();
+      var text = new XMLSerializer().serializeToString(svg);
+      var url = URL.createObjectURL(new Blob([text], { type: "image/svg+xml" }));
+      var img = new Image();
+      img.onload = function () {
+        var c = document.createElement("canvas");
+        c.width = 1400 * 2; c.height = 2800 * 2;
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#060b14";
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        var a = document.createElement("a");
+        a.href = c.toDataURL("image/png");
+        a.download = "visionflow-flow-diagram.png";
+        a.click();
+      };
+      img.src = url;
+    }
+  </script>
+</body>
+</html>
